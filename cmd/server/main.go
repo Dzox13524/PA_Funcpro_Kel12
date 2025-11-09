@@ -4,27 +4,27 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/domain"
-	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/handler"
+	handle "github.com/Dzox13524/PA_Funcpro_Kel12/internal/handler"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/middleware"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/platform/database"
-	"github.com/joho/godotenv"
+	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/repository"
+	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/response"
+	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/service"
 )
 
 func main() {
 	// Konfigurasi database
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("error saat load env")
-	}
-
 	db := database.NewConnection()
-	db.AutoMigrate(&domain.User{})
+	userRepo := repository.NewUserRepository(db)
+	userService := service.NewUserService(userRepo)	
+	userHandler := handle.NewUserHandler(userService)
 	// konfig comsole
 	log.SetFlags(0)
-
-
+	
+	
 	mux := http.NewServeMux()
+	mux.HandleFunc("POST /users", userHandler.HandleCreateUser)
+    mux.HandleFunc("GET /users", userHandler.HandleGetUserByID)
 	mux.HandleFunc("GET /ping", func (w http.ResponseWriter, r *http.Request){
 		type User struct {
         ID   string 

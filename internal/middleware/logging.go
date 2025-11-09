@@ -35,5 +35,5 @@ func HandleError(message string) {
 }
 
 func HandleLog(message string) {
-	color.Blue("%s", message)
+	color.Blue(message)
 }
