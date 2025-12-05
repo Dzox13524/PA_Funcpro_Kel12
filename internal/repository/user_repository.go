@@ -8,45 +8,39 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserRepositoryInterface interface {
-	GetUserByID(ctx context.Context, id string) (domain.User, error)
-	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
-	Create(ctx context.Context, user domain.User) (domain.User, error)
-}
+type GetUserByIDRepoFunc func(ctx context.Context, id string) (domain.User, error)
+type GetUserByEmailRepoFunc func(ctx context.Context, email string) (domain.User, error)
+type CreateUserRepoFunc func(ctx context.Context, user domain.User) (domain.User, error)
 
+func NewGetUserByIDRepository(db *gorm.DB) GetUserByIDRepoFunc {
+	return func(ctx context.Context, id string) (domain.User, error) {
+		var user domain.User
+		result := db.WithContext(ctx).First(&user, "ID = ?", id)
 
-type userRepository struct {
-	db *gorm.DB
-}
-
-func NewUserRepository(db *gorm.DB) UserRepositoryInterface {
-	return &userRepository{
-		db:db,
-	}
-}
-
-func (r*userRepository) GetUserByID(ctx context.Context, ID string) (domain.User, error) {
-	var user domain.User
-	result := r.db.WithContext(ctx).First(&user, "ID = ?", ID)
-
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				return domain.User{}, result.Error
+			}
 			return domain.User{}, result.Error
 		}
+		return user, nil
 	}
-	return user, nil
 }
 
-func (r*userRepository) GetUserByEmail(ctx context.Context, Email string) (domain.User, error) {
-	var user domain.User
-	result := r.db.WithContext(ctx).First(&user, "email = ?", Email)
-	return user, result.Error
+func NewGetUserByEmailRepository(db *gorm.DB) GetUserByEmailRepoFunc {
+	return func(ctx context.Context, email string) (domain.User, error) {
+		var user domain.User
+		result := db.WithContext(ctx).First(&user, "email = ?", email)
+		return user, result.Error
+	}
 }
 
-func (r *userRepository) Create(ctx context.Context, user domain.User) (domain.User, error) {
-	result := r.db.WithContext(ctx).Create(&user)
-	if result.Error != nil {
-        return domain.User{}, result.Error
-    }
-	return  user, nil
+func NewCreateUserRepository(db *gorm.DB) CreateUserRepoFunc {
+	return func(ctx context.Context, user domain.User) (domain.User, error) {
+		result := db.WithContext(ctx).Create(&user)
+		if result.Error != nil {
+			return domain.User{}, result.Error
+		}
+		return user, nil
+	}
 }
