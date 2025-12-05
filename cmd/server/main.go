@@ -23,8 +23,8 @@ func main() {
 	
 	
 	mux := http.NewServeMux()
-	mux.HandleFunc("POST /users", userHandler.HandleCreateUser)
-    mux.HandleFunc("GET /users", userHandler.HandleGetUserByID)
+	mux.HandleFunc("POST /api/v1/auth/register", middleware.MakeHandler(userHandler.HandleCreateUser))
+	mux.HandleFunc("GET /api/v1/users/{id}", userHandler.HandleGetUserByID)
 	mux.HandleFunc("GET /ping", func (w http.ResponseWriter, r *http.Request){
 		type User struct {
         ID   string 
