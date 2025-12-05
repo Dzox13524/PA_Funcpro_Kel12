@@ -16,42 +16,40 @@ type CreateUserRequest struct {
 	Password string
 }
 
-func HandleCreateUser(createUser service.CreateUserFunc) func(http.ResponseWriter, *http.Request) error {
-	return func(w http.ResponseWriter, r *http.Request) error {
+func HandleCreateUser(createUser service.CreateUserFunc) func(*http.Request) (int, any, error) {
+	return func(r *http.Request) (int, any, error) {
 		var req CreateUserRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			return response.NewAPIError(http.StatusBadRequest, "Format JSON tidak valid!")
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Format JSON tidak valid!")
 		}
 
 		newUser, err := createUser(r.Context(), req.Name, req.Email, req.Password)
 		if err != nil {
 			if err.Error() == "email sudah terdaftar" {
-				return response.NewAPIError(http.StatusConflict, err.Error())
+				return 0, nil, response.NewAPIError(http.StatusConflict, err.Error())
 			}
-			return err
+			return 0, nil, err
 		}
 
-		response.WriteJSON(w, http.StatusCreated, "success_created", newUser)
-		return nil
+		return http.StatusCreated, newUser, nil
 	}
 }
 
-func HandleGetUserByID(getUserByID service.GetUserByIDFunc) func(http.ResponseWriter, *http.Request) error {
-	return func(w http.ResponseWriter, r *http.Request) error {
+func HandleGetUserByID(getUserByID service.GetUserByIDFunc) func(*http.Request) (int, any, error) {
+	return func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 		if id == "" {
-			return response.NewAPIError(http.StatusBadRequest, "ID User diperlukan")
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "ID User diperlukan")
 		}
 
 		user, err := getUserByID(r.Context(), id)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) || err.Error() == "user tidak ditemukan" {
-				return response.NewAPIError(http.StatusNotFound, "User tidak ditemukan")
+				return 0, nil, response.NewAPIError(http.StatusNotFound, "User tidak ditemukan")
 			}
-			return err
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "success", user)
-		return nil
+		return http.StatusOK, user, nil
 	}
 }

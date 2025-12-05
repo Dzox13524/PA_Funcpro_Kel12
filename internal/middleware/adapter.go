@@ -5,11 +5,11 @@ import (
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/response"
 )
 
-type APIFunc func(w http.ResponseWriter, r *http.Request) error
+type APIFunc func(r *http.Request) (int, any, error)
 
 func MakeHandler(fn APIFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := fn(w, r)
+		statusCode, data, err := fn(r)
 
 		if err != nil {
 			if apiErr, ok := err.(response.APIError); ok {
@@ -17,6 +17,8 @@ func MakeHandler(fn APIFunc) http.HandlerFunc {
 			} else {
 				response.WriteJSON(w, http.StatusInternalServerError, "error_internal", err.Error())
 			}
+			return
 		}
+		response.WriteJSON(w, statusCode, "success", data)
 	}
 }
