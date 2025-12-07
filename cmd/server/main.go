@@ -14,7 +14,7 @@ import (
 
 func main() {
 	db := database.NewConnection()
-	db.AutoMigrate(&domain.User{}, &domain.Product{})
+	db.AutoMigrate(&domain.User{}, &domain.Product{},&domain.Article{})
 
 	userRepoGetByID := repository.NewGetUserByIDRepository(db)
 	userRepoGetByEmail := repository.NewGetUserByEmailRepository(db)
@@ -27,6 +27,11 @@ func main() {
 	prodRepoUpdate := repository.NewUpdateProductRepository(db)
 	prodRepoDelete := repository.NewDeleteProductRepository(db)
 
+	articlerepoCreate := repository.NewCreateArticleRepository(db)
+	articlerepoGetByID := repository.NewGetArticleByIDRepository(db)
+	articlerepoGetAll := repository.NewGetAllArticlesRepository(db)
+	
+
 	createUserService := service.NewCreateUser(userRepoCreate, userRepoGetByEmail)
 	getUserByIDService := service.NewGetUserByID(userRepoGetByID)
 	loginService := service.NewLoginService(userRepoGetByEmail)
@@ -38,6 +43,10 @@ func main() {
 	svcUpdateProduct := service.NewUpdateProductService(prodRepoUpdate, prodRepoGetByID)
 	svcDeleteProduct := service.NewDeleteProductService(prodRepoDelete, prodRepoGetByID)
 	svcUploadImage := service.NewUploadProductImageService(prodRepoGetByID, prodRepoUpdate)
+
+	svccreatearticle := service.NewCreateArticleService(articlerepoCreate)
+	svcgetarticlebyid := service.NewGetArticleByIDService(articlerepoGetByID)
+	svcgetallarticles := service.NewGetAllArticlesService(articlerepoGetAll)
 
 	log.SetFlags(0)
 	mux := http.NewServeMux()
@@ -56,6 +65,9 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/market/products/{id}", middleware.AuthMiddleware(handle.HandleDeleteProduct(svcDeleteProduct)))
 	mux.HandleFunc("POST /api/v1/market/products/{id}/upload", middleware.AuthMiddleware(handle.HandleUploadProductImage(svcUploadImage)))
 
+	mux.HandleFunc("POST /api/v1/articles", middleware.AuthMiddleware(handle.HandleCreateArticle(svccreatearticle)))
+	mux.HandleFunc("GET /api/v1/articles", handle.HandleGetAllArticles(svcgetallarticles))
+	mux.HandleFunc("GET /api/v1/articles/{id}", handle.HandleGetArticleByID(svcgetarticlebyid))
 
 	var finalHandler http.Handler = mux
 	finalHandler = middleware.Logging(finalHandler)
