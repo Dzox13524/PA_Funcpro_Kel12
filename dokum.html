@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Documentation & Tester</title>
+    <title>API Documentation & Tester (Full Features)</title>
     <style>
         :root {
             --bg-color: #1a1a1a;
@@ -22,11 +23,11 @@
             margin: 0;
             padding: 20px;
             display: grid;
-            grid-template-columns: 320px 1fr; /* Sidebar sedikit diperlebar */
+            grid-template-columns: 320px 1fr;
             gap: 20px;
         }
 
-        /* Sidebar Styling - Kiri Atas */
+        /* Sidebar Styling */
         .sidebar {
             background-color: var(--card-bg);
             padding: 20px;
@@ -35,7 +36,7 @@
             position: sticky;
             top: 20px;
             border-left: 5px solid var(--accent);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
         .auth-control {
@@ -78,8 +79,18 @@
             margin-bottom: 10px;
             text-align: center;
         }
-        .status-ok { background: rgba(0, 255, 136, 0.2); color: var(--success); border: 1px solid var(--success); }
-        .status-no { background: rgba(255, 77, 77, 0.2); color: var(--error); border: 1px solid var(--error); }
+
+        .status-ok {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status-no {
+            background: rgba(255, 77, 77, 0.2);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
 
         /* Main Content */
         .main-content {
@@ -95,7 +106,10 @@
             border-left: 5px solid #555;
         }
 
-        .endpoint-card:hover { border-left-color: var(--accent); transition: 0.3s; }
+        .endpoint-card:hover {
+            border-left-color: var(--accent);
+            transition: 0.3s;
+        }
 
         .endpoint-header {
             display: flex;
@@ -113,18 +127,47 @@
             font-size: 0.9em;
         }
 
-        .method.POST { background-color: var(--success); color: #000; }
-        .method.GET { background-color: var(--accent); color: #000; }
-        .method.PATCH { background-color: var(--warning); color: #000; }
-        .method.DELETE { background-color: var(--error); color: #fff; }
+        .method.POST {
+            background-color: var(--success);
+            color: #000;
+        }
 
-        .url { font-family: monospace; font-size: 1.1em; word-break: break-all; }
+        .method.GET {
+            background-color: var(--accent);
+            color: #000;
+        }
 
-        .input-group { margin-bottom: 15px; }
-        
-        label { display: block; margin-bottom: 5px; font-size: 0.9em; color: #aaa; }
-        
-        input[type="text"], textarea {
+        .method.PATCH {
+            background-color: var(--warning);
+            color: #000;
+        }
+
+        .method.DELETE {
+            background-color: var(--error);
+            color: #fff;
+        }
+
+        .url {
+            font-family: monospace;
+            font-size: 1.1em;
+            word-break: break-all;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        input[type="text"],
+        textarea,
+        select,
+        input[type="file"] {
             width: 100%;
             background-color: #1a1a1a;
             border: 1px solid #444;
@@ -135,7 +178,9 @@
             box-sizing: border-box;
         }
 
-        textarea { resize: vertical; }
+        textarea {
+            resize: vertical;
+        }
 
         button {
             background-color: var(--accent);
@@ -148,8 +193,14 @@
             transition: opacity 0.2s;
         }
 
-        button:hover { opacity: 0.8; }
-        button.secondary { background-color: #444; color: #fff; }
+        button:hover {
+            opacity: 0.8;
+        }
+
+        button.secondary {
+            background-color: #444;
+            color: #fff;
+        }
 
         .response-area {
             background-color: #000;
@@ -165,37 +216,61 @@
             overflow-y: auto;
         }
 
-        .response-area.success { border-color: var(--success); }
-        .response-area.error { border-color: var(--error); }
+        .response-area.success {
+            border-color: var(--success);
+        }
 
+        .response-area.error {
+            border-color: var(--error);
+        }
+
+        /* Preview Gambar */
+        .preview-img {
+            max-width: 100%;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 2px solid var(--accent);
+            display: none;
+        }
+
+        /* Section Separator */
+        .section-title {
+            margin-top: 30px;
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+            color: #fff;
+        }
     </style>
 </head>
+
 <body>
 
     <div class="sidebar">
         <h3>🔑 Auth Manager</h3>
-        
-        <div id="auth-status-container">
-            </div>
+
+        <div id="auth-status-container"></div>
 
         <div class="auth-control">
             <label for="manual-token">Bearer Token:</label>
             <textarea id="manual-token" class="token-input" placeholder="Paste Token disini..."></textarea>
-            
+
             <div style="display: flex; gap: 5px;">
                 <button onclick="saveTokenManual()" class="btn-small">💾 Set Token</button>
-                <button onclick="logout()" class="btn-small secondary" style="background:var(--error)">🗑️ Clear</button>
+                <button onclick="logout()" class="btn-small secondary" style="background:var(--error)">🗑️
+                    Clear</button>
             </div>
-            
+
             <p style="font-size: 0.8em; color: #888; margin-top: 5px;">
-                Token otomatis terisi saat Login sukses. Anda juga bisa paste token manual jika testing tanpa login ulang.
+                Token otomatis terisi saat Login sukses.
             </p>
         </div>
     </div>
 
     <div class="main-content">
         <h1>🚀 API Documentation & Tester</h1>
-        
+
+        <h2 class="section-title">1. User & Authentication</h2>
+
         <div class="endpoint-card">
             <div class="endpoint-header">
                 <span class="method POST">POST</span>
@@ -236,7 +311,7 @@
                 <span class="method GET">GET</span>
                 <span class="url">/api/v1/users/me</span>
             </div>
-            <p>Melihat profil user yang sedang login (Menggunakan Token dari sidebar).</p>
+            <p>Melihat profil user yang sedang login.</p>
             <button onclick="sendRequest('me', 'GET', '/api/v1/users/me', true)">Get My Profile</button>
             <div id="res-me" class="response-area"></div>
         </div>
@@ -257,13 +332,77 @@
             <div id="res-update" class="response-area"></div>
         </div>
 
+        <h2 class="section-title">2. Market & Products (Fitur Baru)</h2>
+
+        <div class="endpoint-card" style="border-left-color: #00d2ff;">
+            <div class="endpoint-header">
+                <span class="method POST">POST</span>
+                <span class="url">/api/v1/market/products</span>
+            </div>
+            <p>Membuat postingan produk baru. (Butuh Login)</p>
+            <div class="input-group">
+                <label>Request Body (JSON)</label>
+                <textarea id="body-create-prod" style="height: 120px;">{
+  "name": "Laptop Gaming ROG",
+  "description": "Kondisi mulus, RAM 16GB",
+  "price": 15000000,
+  "stock": 1
+}</textarea>
+            </div>
+            <button onclick="sendRequest('create-prod', 'POST', '/api/v1/market/products', true)">Create
+                Product</button>
+            <div id="res-create-prod" class="response-area"></div>
+        </div>
+
+        <div class="endpoint-card" style="border-left-color: #ffaa00;">
+            <div class="endpoint-header">
+                <span class="method POST">POST</span>
+                <span class="url">/api/v1/market/products/{id}/upload</span>
+            </div>
+            <h3>📸 Upload Gambar (Cloudinary)</h3>
+            <p>Upload file gambar asli. Pastikan ID Produk diisi (bisa copy dari hasil Create Product di atas).</p>
+
+            <div class="input-group">
+                <label>Product ID</label>
+                <input type="text" id="upload-prod-id" placeholder="Paste ID Produk disini...">
+            </div>
+
+            <div class="input-group">
+                <label>Pilih File Gambar</label>
+                <input type="file" id="upload-file-input" accept="image/*">
+            </div>
+
+            <button onclick="uploadImage()">Upload ke Cloudinary</button>
+
+            <div id="res-upload" class="response-area"></div>
+            <img id="img-preview" class="preview-img" alt="Hasil Upload">
+        </div>
+
+        <div class="endpoint-card">
+            <div class="endpoint-header">
+                <span class="method GET">GET</span>
+                <span class="url">/api/v1/market/products/{id}</span>
+            </div>
+            <p>Lihat detail produk untuk memastikan URL gambar sudah masuk.</p>
+            <div class="input-group">
+                <label>Product ID</label>
+                <input type="text" id="check-prod-id" placeholder="ID Produk...">
+            </div>
+            <button onclick="checkProductDetail()">Cek Detail Produk</button>
+            <div id="res-check-prod" class="response-area"></div>
+        </div>
+
+
+        <h2 class="section-title">3. Universal Tester</h2>
+
         <div class="endpoint-card" style="border-left-color: #fff;">
-            <h3>🛠️ Universal Tester</h3>
+            <h3>🛠️ Custom Request</h3>
             <p>Test endpoint lain secara manual.</p>
-            
+
             <div class="input-group">
                 <label>Method</label>
-                <select id="gen-method" style="padding: 10px; background: #333; color: white; border: none; width: 100%;">
+                <select id="gen-method"
+                    style="padding: 10px; background: #333; color: white; border: none; width: 100%;">
                     <option value="GET">GET</option>
                     <option value="POST">POST</option>
                     <option value="PUT">PUT</option>
@@ -273,8 +412,8 @@
             </div>
 
             <div class="input-group">
-                <label>Endpoint URL (Contoh: /api/v1/market/lots)</label>
-                <input type="text" id="gen-url" value="/api/v1/market/lots">
+                <label>Endpoint URL (Contoh: /api/v1/market/products)</label>
+                <input type="text" id="gen-url" value="/api/v1/market/products">
             </div>
 
             <div class="input-group">
@@ -291,10 +430,9 @@
     <script>
         const BASE_URL = "http://localhost:8080";
         let authToken = localStorage.getItem('authToken') || "";
-
         updateAuthUI();
 
-        // Fungsi Simpan Token Manual dari Form Sidebar
+        // --- AUTH HELPER FUNCTIONS ---
         function saveTokenManual() {
             const inputVal = document.getElementById('manual-token').value.trim();
             if (inputVal) {
@@ -307,7 +445,6 @@
             }
         }
 
-        // Fungsi Update UI Sidebar
         function updateAuthUI() {
             const statusContainer = document.getElementById('auth-status-container');
             const tokenInput = document.getElementById('manual-token');
@@ -327,8 +464,7 @@
             updateAuthUI();
         }
 
-        // --- Core Request Functions (Sama seperti sebelumnya) ---
-
+        // --- CORE REQUEST FUNCTION (JSON) ---
         async function sendRequest(id, method, endpoint, requiresAuth) {
             const resArea = document.getElementById(`res-${id}`);
             resArea.style.display = 'block';
@@ -336,11 +472,10 @@
             resArea.className = 'response-area';
 
             const headers = { 'Content-Type': 'application/json' };
-            
-            // Ambil token langsung dari variabel global (yang sinkron dengan input form)
+
             if (requiresAuth) {
                 if (!authToken) {
-                    resArea.innerText = "Error: Token kosong! Silakan Login atau isi token di Sidebar kiri.";
+                    resArea.innerText = "Error: Token kosong! Silakan Login dulu.";
                     resArea.classList.add('error');
                     return;
                 }
@@ -369,35 +504,132 @@
                 });
 
                 const data = await response.json();
-                const output = `Status: ${response.status} ${response.statusText}\n\n` + 
-                               JSON.stringify(data, null, 2);
-                
+                const output = `Status: ${response.status} ${response.statusText}\n\n` +
+                    JSON.stringify(data, null, 2);
+
                 resArea.innerText = output;
 
                 if (response.ok) {
                     resArea.classList.add('success');
+
                     // Auto-save token jika login sukses
                     if (id === 'login' && data.data && data.data.token) {
                         authToken = data.data.token;
                         localStorage.setItem('authToken', authToken);
-                        updateAuthUI(); // Update form di sidebar
+                        updateAuthUI();
                     }
+
+                    // Auto-Copy ID jika Create Product sukses (FITUR BARU)
+                    if (id === 'create-prod' && data.data && data.data.id) {
+                        document.getElementById('upload-prod-id').value = data.data.id;
+                        document.getElementById('check-prod-id').value = data.data.id;
+                        // Tambahkan notifikasi kecil
+                        const oldText = resArea.innerText;
+                        resArea.innerText = oldText + "\n\n[INFO] ID Produk otomatis dicopy ke form Upload & Check!";
+                    }
+
                 } else {
                     resArea.classList.add('error');
                 }
 
             } catch (err) {
-                resArea.innerText = `Network Error: ${err.message}\n(Cek console browser / pastikan server Go jalan)`;
+                resArea.innerText = `Network Error: ${err.message}\n(Pastikan server Go jalan)`;
                 resArea.classList.add('error');
             }
         }
 
+        // --- SPECIAL FUNCTION: UPLOAD IMAGE (Multipart/FormData) ---
+        async function uploadImage() {
+            const id = document.getElementById('upload-prod-id').value.trim();
+            const fileInput = document.getElementById('upload-file-input');
+            const resArea = document.getElementById('res-upload');
+            const imgPreview = document.getElementById('img-preview');
+
+            resArea.style.display = 'block';
+            resArea.innerText = 'Uploading ke Cloudinary...';
+            resArea.className = 'response-area';
+            imgPreview.style.display = 'none';
+
+            if (!authToken) {
+                resArea.innerText = "Error: Token kosong! Login dulu.";
+                resArea.classList.add('error');
+                return;
+            }
+            if (!id) {
+                resArea.innerText = "Error: Product ID harus diisi!";
+                resArea.classList.add('error');
+                return;
+            }
+            if (!fileInput.files[0]) {
+                resArea.innerText = "Error: Pilih file gambar dulu!";
+                resArea.classList.add('error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("image", fileInput.files[0]);
+
+            try {
+                // Perhatikan: Tidak ada header 'Content-Type': 'application/json'
+                // Browser akan otomatis set Content-Type: multipart/form-data boundary...
+                const response = await fetch(`${BASE_URL}/api/v1/market/products/${id}/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                const output = `Status: ${response.status}\n\n` + JSON.stringify(data, null, 2);
+                resArea.innerText = output;
+
+                if (response.ok) {
+                    resArea.classList.add('success');
+                    if (data.data && data.data.image_url) {
+                        imgPreview.src = data.data.image_url;
+                        imgPreview.style.display = 'block';
+                    }
+                } else {
+                    resArea.classList.add('error');
+                }
+            } catch (err) {
+                resArea.innerText = `Error: ${err.message}`;
+                resArea.classList.add('error');
+            }
+        }
+
+        // --- HELPER FUNCTION: CHECK PRODUCT ---
+        async function checkProductDetail() {
+            const id = document.getElementById('check-prod-id').value.trim();
+            if (!id) {
+                alert("Masukkan ID Produk dulu");
+                return;
+            }
+
+            // Reuse fungsi sendRequest tapi ganti parameter manual
+            // Kita hack sedikit biar nggak duplikasi kode fetch
+            const resArea = document.getElementById('res-check-prod');
+            resArea.style.display = 'block';
+            resArea.innerText = 'Loading...';
+
+            try {
+                const res = await fetch(`${BASE_URL}/api/v1/market/products/${id}`);
+                const data = await res.json();
+                resArea.innerText = JSON.stringify(data, null, 2);
+                resArea.className = res.ok ? 'response-area success' : 'response-area error';
+            } catch (e) {
+                resArea.innerText = e.message;
+            }
+        }
+
+        // --- UNIVERSAL REQUEST ---
         async function sendGenericRequest() {
             const method = document.getElementById('gen-method').value;
             const endpoint = document.getElementById('gen-url').value;
             const bodyRaw = document.getElementById('gen-body').value;
             const resArea = document.getElementById('res-generic');
-            
+
             resArea.style.display = 'block';
             resArea.innerText = 'Sending...';
 
@@ -410,7 +642,7 @@
             if (method !== 'GET' && method !== 'DELETE') {
                 try {
                     body = JSON.stringify(JSON.parse(bodyRaw));
-                } catch(e) {
+                } catch (e) {
                     resArea.innerText = "Invalid JSON Body";
                     resArea.classList.add('error');
                     return;
@@ -429,4 +661,5 @@
         }
     </script>
 </body>
+
 </html>
