@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agro API Tester (Final Merge)</title>
+    <title>Agro API Tester</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -37,7 +37,6 @@
             overflow: hidden;
         }
 
-        /* Sidebar Styling */
         aside {
             background-color: #181818;
             border-right: 1px solid var(--border);
@@ -105,7 +104,6 @@
         .status-ok { background: rgba(0, 230, 118, 0.1); color: var(--success); border: 1px solid var(--success); }
         .status-no { background: rgba(244, 67, 54, 0.1); color: var(--error); border: 1px solid var(--error); }
 
-        /* Main Content */
         main {
             padding: 30px;
             overflow-y: auto;
@@ -270,6 +268,13 @@
             <a href="#map-alert" class="nav-item">Data Sebaran</a>
             <a href="#detail-alert" class="nav-item">Detail Laporan</a>
             <a href="#verify-alert" class="nav-item">Verifikasi</a>
+
+            <div class="nav-header">5. Transactions</div>
+            <a href="#create-res" class="nav-item">Buat Reservasi (PO)</a>
+            <a href="#create-order" class="nav-item">Buat Order (langsung)</a>
+            <a href="#list-res" class="nav-item">List Reservasi Saya</a>
+            <a href="#list-orders" class="nav-item">List Order Saya</a>
+            <a href="#trans-actions" class="nav-item">Manage Status</a>
         </nav>
     </aside>
 
@@ -473,7 +478,6 @@
                 <span class="url">/api/v1/alerts</span>
             </div>
             <p>Melaporkan kejadian hama baru (Perlu Login).</p>
-            <p style="color:var(--text-muted); font-size:0.8rem;">Field sesuai struct Alpin: pest_name, city, severity, description.</p>
             <div class="input-group">
                 <label>Body (JSON)</label>
                 <textarea id="body-create-alert">{
@@ -517,14 +521,162 @@
                 <span class="url">/api/v1/alerts/<span class="id-param">{id}</span>/verify</span>
             </div>
             <p>Verifikasi laporan (Increment Verification Count).</p>
-            
             <div class="input-group">
                 <label>Alert ID</label>
                 <input type="text" id="id-verify-alert" placeholder="Alert UUID...">
             </div>
-            
             <button type="button" onclick="sendRequestWithID('verify-alert', 'POST', '/api/v1/alerts/{id}/verify', true, event)">Verifikasi</button>
             <div id="res-verify-alert" class="response-box"></div>
+        </div>
+
+        <h2 class="section-title">5. Transactions (Order & Reservasi)</h2>
+
+        <div class="api-card post" id="create-res">
+            <div class="endpoint-header">
+                <span class="method-badge">POST</span>
+                <span class="url">/api/v1/market/reservations</span>
+            </div>
+            <p>Membuat <b>Reservasi (Pre-Order)</b> untuk produk yang stoknya tersedia.</p>
+            <div class="input-group">
+                <label>Product ID (Wajib)</label>
+                <input type="text" id="res-prod-id" placeholder="Copy Product ID dari hasil Create Product...">
+            </div>
+            <div class="input-group">
+                <label>Body (JSON)</label>
+                <textarea id="body-create-res">{
+  "product_id": "PASTE_ID_DISINI_JIKA_INPUT_ATAS_KOSONG",
+  "quantity": 10,
+  "note": "Tolong dibungkus karung goni ya"
+}</textarea>
+            </div>
+            <button type="button" onclick="createReservation(event)">Buat Reservasi</button>
+            <div id="res-create-res" class="response-box"></div>
+        </div>
+
+        <div class="api-card post" id="create-order">
+            <div class="endpoint-header">
+                <span class="method-badge">POST</span>
+                <span class="url">/api/v1/market/orders</span>
+            </div>
+            <p>Membuat <b>Direct Order (Beli Langsung)</b>.</p>
+            <div class="input-group">
+                <label>Product ID</label>
+                <input type="text" id="order-prod-id" placeholder="Product ID...">
+            </div>
+            <div class="input-group">
+                <label>Body (JSON)</label>
+                <textarea id="body-create-order">{
+  "product_id": "PASTE_ID_DISINI_JIKA_INPUT_ATAS_KOSONG",
+  "quantity": 2,
+  "note": "Kirim via JNE ya gan"
+}</textarea>
+            </div>
+            <button type="button" onclick="createOrder(event)">Buat Order</button>
+            <div id="res-create-order" class="response-box"></div>
+        </div>
+
+        <div class="api-card get" id="list-res">
+            <div class="endpoint-header">
+                <span class="method-badge">GET</span>
+                <span class="url">/api/v1/users/me/reservations</span>
+            </div>
+            <p>Melihat daftar Reservasi (Pre-Order) saya.</p>
+            <button type="button" onclick="sendRequest('list-res', 'GET', '/api/v1/users/me/reservations', true, event)">List My Reservations</button>
+            <div id="res-list-res" class="response-box"></div>
+        </div>
+
+        <div class="api-card get" id="list-orders">
+            <div class="endpoint-header">
+                <span class="method-badge">GET</span>
+                <span class="url">/api/v1/users/me/orders</span>
+            </div>
+            <p>Melihat daftar Order (Pesanan Biasa) saya.</p>
+            <button type="button" onclick="sendRequest('list-orders', 'GET', '/api/v1/users/me/orders', true, event)">List My Orders</button>
+            <div id="res-list-orders" class="response-box"></div>
+        </div>
+
+        <div class="api-card get" id="detail-trans">
+            <div class="endpoint-header">
+                <span class="method-badge">GET</span>
+                <span class="url">/api/v1/market/orders/<span class="id-param">{id}</span></span>
+            </div>
+            <p>Melihat detail transaksi (Order atau Reservasi) berdasarkan ID.</p>
+            <div class="input-group">
+                <label>Transaction ID</label>
+                <input type="text" id="id-detail-trans" placeholder="Transaction UUID...">
+            </div>
+            <button type="button" onclick="sendRequestWithID('detail-trans', 'GET', '/api/v1/market/orders/{id}', true, event)">Get Detail Transaction</button>
+            <div id="res-detail-trans" class="response-box"></div>
+        </div>
+
+        <div id="trans-actions"></div>
+        
+        <div class="api-card post" id="confirm-res">
+            <div class="endpoint-header">
+                <span class="method-badge">POST</span>
+                <span class="url">/api/v1/market/reservations/<span class="id-param">{id}</span>/confirm</span>
+            </div>
+            <p>Mengkonfirmasi Reservasi (Status -> confirmed).</p>
+            <div class="input-group">
+                <label>Transaction ID</label>
+                <input type="text" id="id-confirm-res" placeholder="Transaction UUID...">
+            </div>
+            <button type="button" onclick="sendRequestWithID('confirm-res', 'POST', '/api/v1/market/reservations/{id}/confirm', true, event)">Confirm Reservation</button>
+            <div id="res-confirm-res" class="response-box"></div>
+        </div>
+
+        <div class="api-card post" id="cancel-res">
+            <div class="endpoint-header">
+                <span class="method-badge">POST</span>
+                <span class="url">/api/v1/market/reservations/<span class="id-param">{id}</span>/cancel</span>
+            </div>
+            <p>Membatalkan Reservasi (Status -> cancelled).</p>
+            <div class="input-group">
+                <label>Transaction ID</label>
+                <input type="text" id="id-cancel-res" placeholder="Transaction UUID...">
+            </div>
+            <button type="button" onclick="sendRequestWithID('cancel-res', 'POST', '/api/v1/market/reservations/{id}/cancel', true, event)">Cancel Reservation</button>
+            <div id="res-cancel-res" class="response-box"></div>
+        </div>
+
+        <div class="api-card patch" id="update-res-status">
+            <div class="endpoint-header">
+                <span class="method-badge">PATCH</span>
+                <span class="url">/api/v1/market/reservations/<span class="id-param">{id}</span>/status</span>
+            </div>
+            <p>Update Status Reservasi Manual (Misal: 'shipped' saat panen dikirim).</p>
+            <div class="input-group">
+                <label>Transaction ID (Reservasi)</label>
+                <input type="text" id="id-update-res" placeholder="Reservation UUID...">
+            </div>
+            <div class="input-group">
+                <label>Body (JSON)</label>
+                <textarea id="body-update-res">{
+  "status": "shipped"
+}</textarea>
+            </div>
+            <button type="button" onclick="sendRequestWithID('update-res-status', 'PATCH', '/api/v1/market/reservations/{id}/status', true, event)">Update Status Reservasi</button>
+            <div id="res-update-res-status" class="response-box"></div>
+        </div>
+
+        <div class="api-card patch" id="update-order-status">
+            <div class="endpoint-header">
+                <span class="method-badge">PATCH</span>
+                <span class="url">/api/v1/market/orders/<span class="id-param">{id}</span>/status</span>
+            </div>
+            <p>Update Status Order Manual (Misal: shipped, completed).</p>
+            <div class="input-group">
+                <label>Transaction ID (Order)</label>
+                <input type="text" id="id-update-order" placeholder="Order UUID...">
+            </div>
+            <div class="input-group">
+                <label>Body (JSON)</label>
+                <textarea id="body-update-order">{
+  "status": "shipped"
+}</textarea>
+            </div>
+            <button type="button" onclick="sendRequestWithID('update-order-status', 'PATCH', '/api/v1/market/orders/{id}/status', true, event)">Update Status Order</button>
+            <div id="res-update-order-status" class="response-box"></div>
         </div>
 
     </main>
@@ -631,25 +783,35 @@
                         updateAuthUI();
                     }
 
-                    // Auto-copy ID helper
                     if (data.data && data.data.id) {
                          const newId = data.data.id;
-                         // Helper for Pest Control
+                         
                          if (elementId === 'create-alert') {
                              if(document.getElementById('id-detail-alert')) document.getElementById('id-detail-alert').value = newId;
                              if(document.getElementById('id-verify-alert')) document.getElementById('id-verify-alert').value = newId;
                          }
-                         // Helper for Products
                          if (elementId === 'create-prod') {
                             if(document.getElementById('upload-prod-id')) document.getElementById('upload-prod-id').value = newId;
                             if(document.getElementById('id-detail-prod')) document.getElementById('id-detail-prod').value = newId;
+                            if(document.getElementById('res-prod-id')) document.getElementById('res-prod-id').value = newId;
+                            if(document.getElementById('order-prod-id')) document.getElementById('order-prod-id').value = newId;
                          }
-                         // Helper for Questions
                          if (elementId === 'create-q') {
                             if(document.getElementById('id-detail-q')) document.getElementById('id-detail-q').value = newId;
                             if(document.getElementById('id-answer-q')) document.getElementById('id-answer-q').value = newId;
                             if(document.getElementById('id-like-q')) document.getElementById('id-like-q').value = newId;
                          }
+                         if (elementId === 'create-res') {
+                             if(document.getElementById('id-detail-trans')) document.getElementById('id-detail-trans').value = newId;
+                             if(document.getElementById('id-confirm-res')) document.getElementById('id-confirm-res').value = newId;
+                             if(document.getElementById('id-cancel-res')) document.getElementById('id-cancel-res').value = newId;
+                             if(document.getElementById('id-update-res')) document.getElementById('id-update-res').value = newId;
+                         }
+                         if (elementId === 'create-order') {
+                             if(document.getElementById('id-detail-trans')) document.getElementById('id-detail-trans').value = newId;
+                             if(document.getElementById('id-update-order')) document.getElementById('id-update-order').value = newId;
+                         }
+
                          resBox.innerText += "\n\n[INFO] ID berhasil disalin otomatis ke form terkait!";
                     }
                 } else {
@@ -662,6 +824,54 @@
             }
             
             resBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        async function createReservation(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            const prodIdInput = document.getElementById('res-prod-id').value.trim();
+            const bodyInput = document.getElementById('body-create-res');
+            let bodyJson = bodyInput.value;
+
+            if (prodIdInput) {
+                try {
+                    const obj = JSON.parse(bodyJson);
+                    obj.product_id = prodIdInput;
+                    bodyJson = JSON.stringify(obj, null, 2);
+                    bodyInput.value = bodyJson;
+                } catch(e) {
+                    console.error("JSON Error parsing body for reservation");
+                }
+            }
+            
+            sendRequest('create-res', 'POST', '/api/v1/market/reservations', true, null);
+        }
+
+        async function createOrder(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            const prodIdInput = document.getElementById('order-prod-id').value.trim();
+            const bodyInput = document.getElementById('body-create-order');
+            let bodyJson = bodyInput.value;
+
+            if (prodIdInput) {
+                try {
+                    const obj = JSON.parse(bodyJson);
+                    obj.product_id = prodIdInput;
+                    bodyJson = JSON.stringify(obj, null, 2);
+                    bodyInput.value = bodyJson;
+                } catch(e) {
+                    console.error("JSON Error parsing body for order");
+                }
+            }
+            
+            sendRequest('create-order', 'POST', '/api/v1/market/orders', true, null);
         }
 
         async function sendRequestWithID(elementId, method, endpointTemplate, requiresAuth = false, event) {

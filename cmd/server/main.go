@@ -23,10 +23,10 @@ func main() {
 		&domain.Answer{},
 		&domain.QuestionLike{},
 		&domain.Favorite{},
-		&domain.PestReport{}, 
+		&domain.PestReport{},
+		&domain.MarketTransaction{},
 	)
 
-	// --- REPOSITORY INIT ---
 	userRepoGetByID := repository.NewGetUserByIDRepository(db)
 	userRepoGetByEmail := repository.NewGetUserByEmailRepository(db)
 	userRepoCreate := repository.NewCreateUserRepository(db)
@@ -37,6 +37,11 @@ func main() {
 	prodRepoGetByID := repository.NewGetProductByIDRepository(db)
 	prodRepoUpdate := repository.NewUpdateProductRepository(db)
 	prodRepoDelete := repository.NewDeleteProductRepository(db)
+
+	marketRepoCreate := repository.NewCreateTransactionRepository(db)
+	marketRepoGetByID := repository.NewGetTransactionByIDRepository(db)
+	marketRepoGetByUser := repository.NewGetTransactionsByUserRepository(db)
+	marketRepoUpdateStatus := repository.NewUpdateTransactionStatusRepository(db)
 
 	articlerepoCreate := repository.NewCreateArticleRepository(db)
 	articlerepoGetByID := repository.NewGetArticleByIDRepository(db)
@@ -49,7 +54,6 @@ func main() {
 	likeRepo := repository.NewToggleQuestionLikeRepository(db)
 	favRepo := repository.NewToggleFavoriteRepository(db)
 
-	// Punya Alpin
 	pestRepo := repository.NewPestRepository(db)
 
 	createUserService := service.NewCreateUser(userRepoCreate, userRepoGetByEmail)
@@ -63,6 +67,13 @@ func main() {
 	svcUpdateProduct := service.NewUpdateProductService(prodRepoUpdate, prodRepoGetByID)
 	svcDeleteProduct := service.NewDeleteProductService(prodRepoDelete, prodRepoGetByID)
 	svcUploadImage := service.NewUploadProductImageService(prodRepoGetByID, prodRepoUpdate)
+
+	svcCreateReservation := service.NewCreateReservationService(marketRepoCreate, prodRepoGetByID, prodRepoUpdate)
+	svcCreateOrder := service.NewCreateOrderService(marketRepoCreate, prodRepoGetByID, prodRepoUpdate)
+	svcGetMyReservations := service.NewGetUserTransactionsService(marketRepoGetByUser, domain.TypeReservation)
+	svcGetMyOrders := service.NewGetUserTransactionsService(marketRepoGetByUser, domain.TypeOrder)
+	svcGetTransDetail := service.NewGetTransactionDetailService(marketRepoGetByID)
+	svcUpdateTransStatus := service.NewUpdateTransactionStatusService(marketRepoUpdateStatus)
 
 	svccreatearticle := service.NewCreateArticleService(articlerepoCreate)
 	svcgetarticlebyid := service.NewGetArticleByIDService(articlerepoGetByID)
@@ -80,15 +91,12 @@ func main() {
 	log.SetFlags(0)
 	mux := http.NewServeMux()
 
-	
-	// Auth & User
 	mux.HandleFunc("POST /api/v1/auth/register", handle.HandleCreateUser(createUserService))
 	mux.HandleFunc("POST /api/v1/auth/login", handle.HandleLogin(loginService))
 	mux.HandleFunc("GET /api/v1/users/{id}", handle.HandleGetUserByID(getUserByIDService))
 	mux.HandleFunc("GET /api/v1/users/me", middleware.AuthMiddleware(handle.HandleGetMe(getUserByIDService)))
 	mux.HandleFunc("PATCH /api/v1/users/me", middleware.AuthMiddleware(handle.HandleUpdateMe(updateUserService)))
 
-	// Market (Riski)
 	mux.HandleFunc("POST /api/v1/market/products", middleware.AuthMiddleware(handle.HandleCreateProduct(svcCreateProduct)))
 	mux.HandleFunc("GET /api/v1/market/products", handle.HandleGetAllProducts(svcGetAllProducts))
 	mux.HandleFunc("GET /api/v1/market/products/{id}", handle.HandleGetProductByID(svcGetProductByID))
@@ -96,12 +104,19 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/market/products/{id}", middleware.AuthMiddleware(handle.HandleDeleteProduct(svcDeleteProduct)))
 	mux.HandleFunc("POST /api/v1/market/products/{id}/upload", middleware.AuthMiddleware(handle.HandleUploadProductImage(svcUploadImage)))
 
-	// Articles (Riski)
+	mux.HandleFunc("POST /api/v1/market/reservations", middleware.AuthMiddleware(handle.HandleCreateReservation(svcCreateReservation)))
+	mux.HandleFunc("POST /api/v1/market/orders", middleware.AuthMiddleware(handle.HandleCreateOrder(svcCreateOrder)))
+	mux.HandleFunc("GET /api/v1/users/me/reservations", middleware.AuthMiddleware(handle.HandleGetMyReservations(svcGetMyReservations)))
+	mux.HandleFunc("GET /api/v1/users/me/orders", middleware.AuthMiddleware(handle.HandleGetMyOrders(svcGetMyOrders)))
+	mux.HandleFunc("GET /api/v1/market/orders/{id}", middleware.AuthMiddleware(handle.HandleGetTransactionDetail(svcGetTransDetail)))
+	mux.HandleFunc("POST /api/v1/market/reservations/{id}/confirm", middleware.AuthMiddleware(handle.HandleConfirmReservation(svcUpdateTransStatus)))
+	mux.HandleFunc("POST /api/v1/market/reservations/{id}/cancel", middleware.AuthMiddleware(handle.HandleCancelReservation(svcUpdateTransStatus)))
+	mux.HandleFunc("PATCH /api/v1/market/orders/{id}/status", middleware.AuthMiddleware(handle.HandleUpdateOrderStatus(svcUpdateTransStatus)))
+
 	mux.HandleFunc("POST /api/v1/articles", middleware.AuthMiddleware(handle.HandleCreateArticle(svccreatearticle)))
 	mux.HandleFunc("GET /api/v1/articles", handle.HandleGetAllArticles(svcgetallarticles))
 	mux.HandleFunc("GET /api/v1/articles/{id}", handle.HandleGetArticleByID(svcgetarticlebyid))
 
-	// Forum / Q&A (mamat keknya)
 	mux.HandleFunc("GET /api/v1/questions", middleware.AuthMiddlewareOptional(handle.HandleGetFeed(svcGetFeed)))
 	mux.HandleFunc("POST /api/v1/questions", middleware.AuthMiddleware(handle.HandleCreateQuestion(svcCreateQ)))
 	mux.HandleFunc("GET /api/v1/questions/{id}", middleware.AuthMiddlewareOptional(handle.HandleGetQuestionDetail(svcGetDetail)))
@@ -109,7 +124,6 @@ func main() {
 	mux.HandleFunc("POST /api/v1/questions/{id}/like", middleware.AuthMiddleware(handle.HandleToggleLike(svcLike)))
 	mux.HandleFunc("POST /api/v1/questions/{id}/favorite", middleware.AuthMiddleware(handle.HandleToggleFav(svcFav)))
 
-	// Alerts / Pest Control (Alpin)
 	mux.HandleFunc("POST /api/v1/alerts", middleware.AuthMiddleware(handle.HandleCreateAlert(pestService)))
 	mux.HandleFunc("GET /api/v1/alerts/map", handle.HandleGetMapData(pestService))
 	mux.HandleFunc("GET /api/v1/alerts/{id}", handle.HandleGetAlertDetail(pestService))
