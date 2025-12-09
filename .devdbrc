@@ -2,5 +2,9 @@
   {
     "type": "sqlite",
     "path": "c:\\Users\\khosy\\OneDrive\\Desktop\\PAfuncpro\\database.db"
+  },
+  {
+    "type": "sqlite",
+    "path": "c:\\Users\\ASUS\\OneDrive\\Desktop\\Funcpro\\PA_Funcpro_Kel12\\database.db"
   }
 ]

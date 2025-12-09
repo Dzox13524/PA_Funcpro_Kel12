@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agro API Documentation & Tester (Fixed)</title>
+    <title>Agro API Tester (Final Merge)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -77,7 +77,10 @@
             font-weight: bold;
             letter-spacing: 1px;
             margin-top: 15px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
         }
+        .nav-header:first-of-type { border-top: none; }
 
         .nav-item {
             display: block;
@@ -248,19 +251,25 @@
         </div>
 
         <nav>
-            <div class="nav-header">Users & Auth</div>
+            <div class="nav-header">1. Users & Auth</div>
             <a href="#register" class="nav-item">Register</a>
             <a href="#login" class="nav-item">Login</a>
             <a href="#get-me" class="nav-item">Get Profile</a>
 
-            <div class="nav-header">Marketplace</div>
+            <div class="nav-header">2. Marketplace</div>
             <a href="#create-prod" class="nav-item">Create Product</a>
             <a href="#upload-img" class="nav-item">Upload Image</a>
             <a href="#detail-prod" class="nav-item">Detail Product</a>
 
-            <div class="nav-header">Forum & QnA</div>
+            <div class="nav-header">3. Forum & QnA</div>
             <a href="#create-q" class="nav-item">Create Question</a>
             <a href="#detail-q" class="nav-item">Detail + Answers</a>
+
+            <div class="nav-header">4. Pest Control</div>
+            <a href="#create-alert" class="nav-item">Lapor Hama</a>
+            <a href="#map-alert" class="nav-item">Data Sebaran</a>
+            <a href="#detail-alert" class="nav-item">Detail Laporan</a>
+            <a href="#verify-alert" class="nav-item">Verifikasi</a>
         </nav>
     </aside>
 
@@ -456,6 +465,68 @@
             <div id="res-like-q" class="response-box"></div>
         </div>
 
+        <h2 class="section-title">4. Pest Control (Laporan Hama)</h2>
+
+        <div class="api-card post" id="create-alert">
+            <div class="endpoint-header">
+                <span class="method-badge">POST</span>
+                <span class="url">/api/v1/alerts</span>
+            </div>
+            <p>Melaporkan kejadian hama baru (Perlu Login).</p>
+            <p style="color:var(--text-muted); font-size:0.8rem;">Field sesuai struct Alpin: pest_name, city, severity, description.</p>
+            <div class="input-group">
+                <label>Body (JSON)</label>
+                <textarea id="body-create-alert">{
+  "pest_name": "Wereng Batang Coklat",
+  "description": "Menyerang area sawah petak selatan, padi mulai kering.",
+  "city": "Jember",
+  "severity": "high"
+}</textarea>
+            </div>
+            <button type="button" onclick="sendRequest('create-alert', 'POST', '/api/v1/alerts', true, event)">Lapor Hama</button>
+            <div id="res-create-alert" class="response-box"></div>
+        </div>
+
+        <div class="api-card get" id="map-alert">
+            <div class="endpoint-header">
+                <span class="method-badge">GET</span>
+                <span class="url">/api/v1/alerts/map</span>
+            </div>
+            <p>Mengambil semua data laporan hama.</p>
+            <button type="button" onclick="sendRequest('map-alert', 'GET', '/api/v1/alerts/map', false, event)">Get All Alerts</button>
+            <div id="res-map-alert" class="response-box"></div>
+        </div>
+
+        <div class="api-card get" id="detail-alert">
+            <div class="endpoint-header">
+                <span class="method-badge">GET</span>
+                <span class="url">/api/v1/alerts/<span class="id-param">{id}</span></span>
+            </div>
+            <p>Melihat detail satu laporan hama.</p>
+            <div class="input-group">
+                <label>Alert ID</label>
+                <input type="text" id="id-detail-alert" placeholder="Alert UUID...">
+            </div>
+            <button type="button" onclick="sendRequestWithID('detail-alert', 'GET', '/api/v1/alerts/{id}', false, event)">Get Detail Alert</button>
+            <div id="res-detail-alert" class="response-box"></div>
+        </div>
+
+        <div class="api-card post" id="verify-alert">
+            <div class="endpoint-header">
+                <span class="method-badge">POST</span>
+                <span class="url">/api/v1/alerts/<span class="id-param">{id}</span>/verify</span>
+            </div>
+            <p>Verifikasi laporan (Increment Verification Count).</p>
+            
+            <div class="input-group">
+                <label>Alert ID</label>
+                <input type="text" id="id-verify-alert" placeholder="Alert UUID...">
+            </div>
+            
+            <button type="button" onclick="sendRequestWithID('verify-alert', 'POST', '/api/v1/alerts/{id}/verify', true, event)">Verifikasi</button>
+            <div id="res-verify-alert" class="response-box"></div>
+        </div>
+
     </main>
 
     <script>
@@ -499,7 +570,6 @@
         }
 
         async function sendRequest(elementId, method, endpoint, requiresAuth = false, event) {
-            // CRITICAL FIX: Prevent default behavior
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -561,11 +631,26 @@
                         updateAuthUI();
                     }
 
-                    if (elementId === 'create-prod' && data.data && data.data.id) {
-                        const newId = data.data.id;
-                        if(document.getElementById('upload-prod-id')) document.getElementById('upload-prod-id').value = newId;
-                        if(document.getElementById('id-detail-prod')) document.getElementById('id-detail-prod').value = newId;
-                        resBox.innerText += "\n\n[INFO] ID Produk otomatis disalin!";
+                    // Auto-copy ID helper
+                    if (data.data && data.data.id) {
+                         const newId = data.data.id;
+                         // Helper for Pest Control
+                         if (elementId === 'create-alert') {
+                             if(document.getElementById('id-detail-alert')) document.getElementById('id-detail-alert').value = newId;
+                             if(document.getElementById('id-verify-alert')) document.getElementById('id-verify-alert').value = newId;
+                         }
+                         // Helper for Products
+                         if (elementId === 'create-prod') {
+                            if(document.getElementById('upload-prod-id')) document.getElementById('upload-prod-id').value = newId;
+                            if(document.getElementById('id-detail-prod')) document.getElementById('id-detail-prod').value = newId;
+                         }
+                         // Helper for Questions
+                         if (elementId === 'create-q') {
+                            if(document.getElementById('id-detail-q')) document.getElementById('id-detail-q').value = newId;
+                            if(document.getElementById('id-answer-q')) document.getElementById('id-answer-q').value = newId;
+                            if(document.getElementById('id-like-q')) document.getElementById('id-like-q').value = newId;
+                         }
+                         resBox.innerText += "\n\n[INFO] ID berhasil disalin otomatis ke form terkait!";
                     }
                 } else {
                     resBox.classList.add('error');
@@ -580,7 +665,6 @@
         }
 
         async function sendRequestWithID(elementId, method, endpointTemplate, requiresAuth = false, event) {
-            // CRITICAL FIX: Prevent default behavior
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -654,7 +738,6 @@
         }
 
         async function uploadImage(event) {
-            // CRITICAL FIX: Prevent default behavior
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();

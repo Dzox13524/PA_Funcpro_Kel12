@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/domain"
 	handle "github.com/Dzox13524/PA_Funcpro_Kel12/internal/handler"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/middleware"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/platform/database"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/repository"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/service"
-	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/domain"
 )
 
 func main() {
@@ -17,15 +17,16 @@ func main() {
 
 	db.AutoMigrate(
 		&domain.User{},
-		&domain.Product{}, 
+		&domain.Product{},
 		&domain.Article{},
-		&domain.Question{}, 
+		&domain.Question{},
 		&domain.Answer{},
-		&domain.QuestionLike{}, 
+		&domain.QuestionLike{},
 		&domain.Favorite{},
+		&domain.PestReport{}, 
 	)
 
-
+	// --- REPOSITORY INIT ---
 	userRepoGetByID := repository.NewGetUserByIDRepository(db)
 	userRepoGetByEmail := repository.NewGetUserByEmailRepository(db)
 	userRepoCreate := repository.NewCreateUserRepository(db)
@@ -48,6 +49,8 @@ func main() {
 	likeRepo := repository.NewToggleQuestionLikeRepository(db)
 	favRepo := repository.NewToggleFavoriteRepository(db)
 
+	// Punya Alpin
+	pestRepo := repository.NewPestRepository(db)
 
 	createUserService := service.NewCreateUser(userRepoCreate, userRepoGetByEmail)
 	getUserByIDService := service.NewGetUserByID(userRepoGetByID)
@@ -72,16 +75,20 @@ func main() {
 	svcLike := service.NewToggleLike(likeRepo)
 	svcFav := service.NewToggleFav(favRepo)
 
-	
+	pestService := service.NewPestService(pestRepo)
+
 	log.SetFlags(0)
 	mux := http.NewServeMux()
 
+	
+	// Auth & User
 	mux.HandleFunc("POST /api/v1/auth/register", handle.HandleCreateUser(createUserService))
 	mux.HandleFunc("POST /api/v1/auth/login", handle.HandleLogin(loginService))
 	mux.HandleFunc("GET /api/v1/users/{id}", handle.HandleGetUserByID(getUserByIDService))
 	mux.HandleFunc("GET /api/v1/users/me", middleware.AuthMiddleware(handle.HandleGetMe(getUserByIDService)))
 	mux.HandleFunc("PATCH /api/v1/users/me", middleware.AuthMiddleware(handle.HandleUpdateMe(updateUserService)))
 
+	// Market (Riski)
 	mux.HandleFunc("POST /api/v1/market/products", middleware.AuthMiddleware(handle.HandleCreateProduct(svcCreateProduct)))
 	mux.HandleFunc("GET /api/v1/market/products", handle.HandleGetAllProducts(svcGetAllProducts))
 	mux.HandleFunc("GET /api/v1/market/products/{id}", handle.HandleGetProductByID(svcGetProductByID))
@@ -89,16 +96,24 @@ func main() {
 	mux.HandleFunc("DELETE /api/v1/market/products/{id}", middleware.AuthMiddleware(handle.HandleDeleteProduct(svcDeleteProduct)))
 	mux.HandleFunc("POST /api/v1/market/products/{id}/upload", middleware.AuthMiddleware(handle.HandleUploadProductImage(svcUploadImage)))
 
+	// Articles (Riski)
 	mux.HandleFunc("POST /api/v1/articles", middleware.AuthMiddleware(handle.HandleCreateArticle(svccreatearticle)))
 	mux.HandleFunc("GET /api/v1/articles", handle.HandleGetAllArticles(svcgetallarticles))
 	mux.HandleFunc("GET /api/v1/articles/{id}", handle.HandleGetArticleByID(svcgetarticlebyid))
 
+	// Forum / Q&A (mamat keknya)
 	mux.HandleFunc("GET /api/v1/questions", middleware.AuthMiddlewareOptional(handle.HandleGetFeed(svcGetFeed)))
 	mux.HandleFunc("POST /api/v1/questions", middleware.AuthMiddleware(handle.HandleCreateQuestion(svcCreateQ)))
 	mux.HandleFunc("GET /api/v1/questions/{id}", middleware.AuthMiddlewareOptional(handle.HandleGetQuestionDetail(svcGetDetail)))
 	mux.HandleFunc("POST /api/v1/questions/{id}/answers", middleware.AuthMiddleware(handle.HandleAddAnswer(svcAddAns)))
 	mux.HandleFunc("POST /api/v1/questions/{id}/like", middleware.AuthMiddleware(handle.HandleToggleLike(svcLike)))
 	mux.HandleFunc("POST /api/v1/questions/{id}/favorite", middleware.AuthMiddleware(handle.HandleToggleFav(svcFav)))
+
+	// Alerts / Pest Control (Alpin)
+	mux.HandleFunc("POST /api/v1/alerts", middleware.AuthMiddleware(handle.HandleCreateAlert(pestService)))
+	mux.HandleFunc("GET /api/v1/alerts/map", handle.HandleGetMapData(pestService))
+	mux.HandleFunc("GET /api/v1/alerts/{id}", handle.HandleGetAlertDetail(pestService))
+	mux.HandleFunc("POST /api/v1/alerts/{id}/verify", middleware.AuthMiddleware(handle.HandleVerifyAlert(pestService)))
 
 	var finalHandler http.Handler = mux
 	finalHandler = middleware.Logging(finalHandler)
