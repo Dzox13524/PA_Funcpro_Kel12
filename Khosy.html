@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroHub - Platform Pertanian Digital Indonesia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --dark-lighter: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            background: var(--primary);
+            color: var(--dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-logout {
+            background: var(--danger);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .hero {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%),
+                        url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(16,185,129,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+
+        .hero-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(100px, -100px) rotate(120deg); }
+            66% { transform: translate(-50px, 150px) rotate(240deg); }
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            animation: fadeInUp 1s ease 0.4s backwards;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .features {
+            padding: 5rem 2rem;
+            background: var(--dark-light);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--dark);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .products {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--dark-light);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--dark-lighter), var(--dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-image::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .product-info p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .product-stock {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-small:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .forum {
+            padding: 5rem 2rem;
+            background: var(--dark-light);
+        }
+
+        .forum-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .forum-card {
+            background: var(--dark);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .forum-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .forum-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .forum-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .forum-meta {
+            flex: 1;
+        }
+
+        .forum-meta h4 {
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
+
+        .forum-meta span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .forum-card h3 {
+            font-size: 1.4rem;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .forum-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .forum-stats {
+            display: flex;
+            gap: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .forum-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .forum-stat i {
+            color: var(--primary);
+        }
+
+        .pest-control {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .map-container {
+            background: var(--dark-light);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .map-placeholder {
+            height: 400px;
+            background: var(--dark);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+            border: 2px dashed rgba(16, 185, 129, 0.3);
+        }
+
+        .map-placeholder i {
+            font-size: 4rem;
+            color: var(--primary);
+        }
+
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .alert-card {
+            background: var(--dark-light);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--danger);
+            transition: all 0.3s ease;
+        }
+
+        .alert-card.medium {
+            border-left-color: var(--warning);
+        }
+
+        .alert-card.low {
+            border-left-color: var(--success);
+        }
+
+        .alert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .severity-badge {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .severity-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .severity-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .severity-low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .stats {
+            padding: 5rem 2rem;
+            background: var(--dark-light);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--dark), var(--dark-lighter));
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            background: var(--dark);
+            padding: 3rem 2rem 1rem;
+            border-top: 1px solid rgba(16, 185, 129, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .footer-section p, .footer-section a {
+            color: var(--text-muted);
+            line-height: 2;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--dark-lighter);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(16, 185, 129, 0.1);
+            color: var(--text-muted);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark-light);
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            animation: slideUp 0.3s ease;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal h2 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            background: var(--dark);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(16, 185, 129, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--dark-light);
+            color: var(--text);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background: var(--dark);
+                flex-direction: column;
+                padding: 2rem;
+                transition: left 0.3s ease;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .products-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-seedling"></i>
+                AgroHub
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home">Beranda</a></li>
+                <li><a href="#features">Fitur</a></li>
+                <li><a href="#products">Marketplace</a></li>
+                <li><a href="#forum">Forum</a></li>
+                <li><a href="#pest">Pest Control</a></li>
+                <li id="authButtons">
+                    <button class="btn-login" onclick="openLoginModal()">Masuk</button>
+                </li>
+            </ul>
+            <div class="mobile-toggle" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-content">
+            <h1>Revolusi Pertanian Digital Indonesia</h1>
+            <p>Platform terpadu untuk petani modern. Jual beli hasil panen, konsultasi ahli, dan monitoring hama dalam satu tempat.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="openRegisterModal()">Mulai Sekarang</button>
+                <button class="btn btn-secondary" onclick="scrollToSection('features')">Pelajari Lebih Lanjut</button>
+            </div>
+        </div>
+    </section>
+
+<section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Fitur Unggulan</h2>
+                <p>Solusi lengkap untuk meningkatkan produktivitas pertanian Anda</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-store feature-icon"></i>
+                    <h3>Marketplace Terpercaya</h3>
+                    <p>Jual beli hasil panen dan sarana produksi pertanian dengan sistem Pre-Order yang aman dan transparan.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-comments feature-icon"></i>
+                    <h3>Forum Konsultasi</h3>
+                    <p>Tanyakan masalah pertanian Anda dan dapatkan jawaban dari sesama petani dan ahli pertanian.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-bug feature-icon"></i>
+                    <h3>Pest Control Map</h3>
+                    <p>Monitoring sebaran hama secara real-time dan dapatkan peringatan dini untuk wilayah Anda.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line feature-icon"></i>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Pantau performa bisnis pertanian Anda dengan dashboard yang mudah dipahami.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt feature-icon"></i>
+                    <h3>Transaksi Aman</h3>
+                    <p>Sistem pembayaran yang terjamin keamanannya dengan berbagai pilihan metode pembayaran.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt feature-icon"></i>
+                    <h3>Mobile Friendly</h3>
+                    <p>Akses platform kapan saja, dimana saja melalui smartphone Anda dengan tampilan responsif.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="products" id="products">
+        <div class="container">
+            <div class="section-header">
+                <h2>Marketplace Produk</h2>
+                <p>Temukan berbagai produk pertanian berkualitas</p>
+            </div>
+            <div class="products-grid" id="productsContainer">
+                <div class="empty-state">
+                    <div class="loading"></div>
+                    <p>Memuat produk...</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;" id="createProductBtn" style="display: none;">
+                <button class="btn btn-primary" onclick="openCreateProductModal()">
+                    <i class="fas fa-plus"></i> Tambah Produk Baru
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="forum" id="forum">
+        <div class="container">
+            <div class="section-header">
+                <h2>Forum Diskusi</h2>
+                <p>Berbagi pengalaman dan solusi dengan komunitas petani</p>
+            </div>
+            <div class="forum-grid" id="forumContainer">
+                <div class="empty-state">
+                    <div class="loading"></div>
+                    <p>Memuat diskusi...</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <button class="btn btn-primary" onclick="openAskModal()">
+                    <i class="fas fa-plus"></i> Buat Pertanyaan Baru
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="pest-control" id="pest">
+        <div class="container">
+            <div class="section-header">
+                <h2>Pest Control Map</h2>
+                <p>Monitoring sebaran hama dan penyakit tanaman secara real-time</p>
+            </div>
+            <div class="map-container">
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>Peta Sebaran Hama Indonesia</h3>
+                    <p style="color: var(--text-muted);">Integrasi dengan Google Maps akan segera tersedia</p>
+                </div>
+            </div>
+            <div class="alerts-grid" id="alertsContainer">
+                <div class="empty-state">
+                    <div class="loading"></div>
+                    <p>Memuat laporan hama...</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <button class="btn btn-primary" onclick="openReportModal()">
+                    <i class="fas fa-exclamation-triangle"></i> Laporkan Hama Baru
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="section-header">
+                <h2>Statistik Platform</h2>
+                <p>Pertumbuhan komunitas AgroHub</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-users stat-icon"></i>
+                    <div class="stat-number" id="statUsers">0</div>
+                    <div class="stat-label">Petani Terdaftar</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-box stat-icon"></i>
+                    <div class="stat-number" id="statProducts">0</div>
+                    <div class="stat-label">Produk Tersedia</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-comment-dots stat-icon"></i>
+                    <div class="stat-number" id="statQuestions">0</div>
+                    <div class="stat-label">Diskusi Forum</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-bug stat-icon"></i>
+                    <div class="stat-number" id="statAlerts">0</div>
+                    <div class="stat-label">Laporan Hama</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Tentang AgroHub</h3>
+                <p>Platform digital terdepan untuk memberdayakan petani Indonesia dengan teknologi modern dan akses pasar yang lebih luas.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Tautan Cepat</h3>
+                <a href="#features">Fitur</a>
+                <a href="#products">Marketplace</a>
+                <a href="#forum">Forum</a>
+                <a href="#pest">Pest Control</a>
+            </div>
+            <div class="footer-section">
+                <h3>Bantuan</h3>
+                <a href="#">Panduan Pengguna</a>
+                <a href="#">FAQ</a>
+                <a href="#">Kontak Support</a>
+                <a href="#">Syarat & Ketentuan</a>
+            </div>
+            <div class="footer-section">
+                <h3>Kontak Kami</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Jember, Jawa Timur</p>
+                <p><i class="fas fa-phone"></i> +62 812-3456-7890</p>
+                <p><i class="fas fa-envelope"></i> info@agrohub.id</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 AgroHub. Hak Cipta Dilindungi. Dibuat Oleh crozerx_jombang</p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('loginModal')">&times;</span>
+            <h2><i class="fas fa-sign-in-alt"></i> Masuk ke AgroHub</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="nama@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Masukkan password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginBtn">Masuk</button>
+                <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">
+                    Belum punya akun? <a href="#" onclick="closeModal('loginModal'); openRegisterModal();" style="color: var(--primary);">Daftar sekarang</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('registerModal')">&times;</span>
+            <h2><i class="fas fa-user-plus"></i> Daftar AgroHub</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="registerName" placeholder="Nama Anda" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="registerEmail" placeholder="nama@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="registerPassword" placeholder="Minimal 8 karakter" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="registerBtn">Daftar</button>
+                <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">
+                    Sudah punya akun? <a href="#" onclick="closeModal('registerModal'); openLoginModal();" style="color: var(--primary);">Masuk</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Product Modal -->
+    <div class="modal" id="createProductModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('createProductModal')">&times;</span>
+            <h2><i class="fas fa-box"></i> Tambah Produk Baru</h2>
+            <form onsubmit="handleCreateProduct(event)">
+                <div class="form-group">
+                    <label>Nama Produk</label>
+                    <input type="text" id="productName" placeholder="Contoh: Pupuk Organik Premium" required>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi</label>
+                    <textarea id="productDescription" placeholder="Jelaskan detail produk Anda..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Harga (Rp)</label>
+                    <input type="number" id="productPrice" placeholder="50000" required>
+                </div>
+                <div class="form-group">
+                    <label>Stok</label>
+                    <input type="number" id="productStock" placeholder="100" required>
+                </div>
+                <div class="form-group">
+                    <label>Gambar Produk (Opsional)</label>
+                    <input type="file" id="productImage" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="createProductBtn">Tambah Produk</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ask Question Modal -->
+    <div class="modal" id="askModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('askModal')">&times;</span>
+            <h2><i class="fas fa-question-circle"></i> Buat Pertanyaan</h2>
+            <form onsubmit="handleAsk(event)">
+                <div class="form-group">
+                    <label>Judul Pertanyaan</label>
+                    <input type="text" id="questionTitle" placeholder="Tulis judul singkat dan jelas" required>
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select id="questionCategory" required>
+                        <option value="">Pilih Kategori</option>
+                        <option value="Hama & Penyakit">Hama & Penyakit</option>
+                        <option value="Pupuk & Nutrisi">Pupuk & Nutrisi</option>
+                        <option value="Teknik Budidaya">Teknik Budidaya</option>
+                        <option value="Irigasi & Air">Irigasi & Air</option>
+                        <option value="Panen & Pasca Panen">Panen & Pasca Panen</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Detail Pertanyaan</label>
+                    <textarea id="questionContent" placeholder="Jelaskan masalah Anda secara detail..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="askBtn">Posting Pertanyaan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Report Pest Modal -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('reportModal')">&times;</span>
+            <h2><i class="fas fa-exclamation-triangle"></i> Laporkan Hama</h2>
+            <form onsubmit="handleReport(event)">
+                <div class="form-group">
+                    <label>Jenis Hama/Penyakit</label>
+                    <input type="text" id="pestName" placeholder="Contoh: Wereng, Blast, Bercak Daun" required>
+                </div>
+                <div class="form-group">
+                    <label>Kota</label>
+                    <input type="text" id="pestCity" placeholder="Contoh: Jember" required>
+                </div>
+                <div class="form-group">
+                    <label>Tingkat Keparahan</label>
+                    <select id="pestSeverity" required>
+                        <option value="">Pilih Tingkat</option>
+                        <option value="low">Rendah</option>
+                        <option value="medium">Sedang</option>
+                        <option value="high">Tinggi</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi</label>
+                    <textarea id="pestDescription" placeholder="Jelaskan kondisi serangan dan area yang terdampak..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="reportBtn">Kirim Laporan</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api/v1';
+        let authToken = localStorage.getItem('authToken') || null;
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (authToken) {
+                loadUserProfile();
+            }
+            loadProducts();
+            loadQuestions();
+            loadAlerts();
+            createParticles();
+        });
+
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('registerBtn');
+            btn.innerHTML = '<div class="loading"></div> Mendaftar...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('registerName').value,
+                        email: document.getElementById('registerEmail').value,
+                        password: document.getElementById('registerPassword').value
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast('Registrasi berhasil! Silakan login 🎉');
+                    closeModal('registerModal');
+                    openLoginModal();
+                } else {
+                    showToast(data.message || 'Registrasi gagal', 'error');
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server', 'error');
+            }
+
+            btn.innerHTML = 'Daftar';
+            btn.disabled = false;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            btn.innerHTML = '<div class="loading"></div> Masuk...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('loginEmail').value,
+                        password: document.getElementById('loginPassword').value
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.data.token) {
+                    authToken = data.data.token;
+                    localStorage.setItem('authToken', authToken);
+                    showToast('Login berhasil! Selamat datang 🌱');
+                    closeModal('loginModal');
+                    await loadUserProfile();
+                    loadProducts();
+                    loadQuestions();
+                } else {
+                    showToast(data.message || 'Login gagal', 'error');
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server', 'error');
+            }
+
+            btn.innerHTML = 'Masuk';
+            btn.disabled = false;
+        }
+
+        async function loadUserProfile() {
+            try {
+                const res = await fetch(`${API_BASE}/users/me`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    currentUser = data.data;
+                    updateAuthUI();
+                } else {
+                    logout();
+                }
+            } catch (err) {
+                console.error('Failed to load profile');
+            }
+        }
+
+        function updateAuthUI() {
+            const authButtons = document.getElementById('authButtons');
+            if (currentUser) {
+                authButtons.innerHTML = `
+                    <div class="user-info">
+                        <span class="user-name">${currentUser.name}</span>
+                        <button class="btn-logout" onclick="logout()">Keluar</button>
+                    </div>
+                `;
+                document.getElementById('createProductBtn').style.display = 'block';
+            } else {
+                authButtons.innerHTML = `<button class="btn-login" onclick="openLoginModal()">Masuk</button>`;
+                document.getElementById('createProductBtn').style.display = 'none';
+            }
+        }
+
+        function logout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            updateAuthUI();
+            showToast('Anda telah keluar');
+            loadProducts();
+            loadQuestions();
+        }
+
+        async function loadProducts() {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '<div class="empty-state"><div class="loading"></div><p>Memuat produk...</p></div>';
+
+            try {
+                const res = await fetch(`${API_BASE}/market/products`);
+                const data = await res.json();
+
+                if (res.ok && data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.map(p => `
+                        <div class="product-card">
+                            <div class="product-image">
+                                ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '<i class="fas fa-seedling"></i>'}
+                            </div>
+                            <div class="product-info">
+                                <h3>${p.name}</h3>
+                                <p>${p.description || 'Tidak ada deskripsi'}</p>
+                                <div class="product-footer">
+                                    <div>
+                                        <div class="product-price">Rp ${Number(p.price).toLocaleString()}</div>
+                                        <div class="product-stock">Stok: ${p.stock}</div>
+                                    </div>
+                                    <button class="btn-small" onclick="buyProduct('${p.id}')">Beli</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    document.getElementById('statProducts').textContent = data.data.length;
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><p>Belum ada produk</p></div>';
+                }
+            } catch (err) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Gagal memuat produk</p></div>';
+            }
+        }
+
+        async function handleCreateProduct(e) {
+            e.preventDefault();
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('createProductBtn');
+            btn.innerHTML = '<div class="loading"></div> Menambah...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/market/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: document.getElementById('productName').value,
+                        description: document.getElementById('productDescription').value,
+                        price: parseInt(document.getElementById('productPrice').value),
+                        stock: parseInt(document.getElementById('productStock').value)
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    const productId = data.data.id;
+                    const fileInput = document.getElementById('productImage');
+                    
+                    if (fileInput.files[0]) {
+                        await uploadProductImage(productId, fileInput.files[0]);
+                    }
+
+                    showToast('Produk berhasil ditambahkan! 📦');
+                    closeModal('createProductModal');
+                    loadProducts();
+                    e.target.reset();
+                } else {
+                    showToast(data.message || 'Gagal menambah produk', 'error');
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server', 'error');
+            }
+
+            btn.innerHTML = 'Tambah Produk';
+            btn.disabled = false;
+        }
+
+        async function uploadProductImage(productId, file) {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                await fetch(`${API_BASE}/market/products/${productId}/upload`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authToken}` },
+                    body: formData
+                });
+            } catch (err) {
+                console.error('Failed to upload image');
+            }
+        }
+
+        function buyProduct(id) {
+            if (!authToken) {
+                showToast('Silakan login untuk membeli produk', 'error');
+                openLoginModal();
+                return;
+            }
+            showToast('Fitur pembelian akan segera tersedia! 🛒');
+        }
+
+        async function loadQuestions() {
+            const container = document.getElementById('forumContainer');
+            container.innerHTML = '<div class="empty-state"><div class="loading"></div><p>Memuat diskusi...</p></div>';
+
+            try {
+                const res = await fetch(`${API_BASE}/questions`);
+                const data = await res.json();
+
+                if (res.ok && data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.slice(0, 5).map(q => {
+                        const initials = q.user?.name?.split(' ').map(n => n[0]).join('') || 'U';
+                        const timeAgo = getTimeAgo(q.created_at);
+                        return `
+                            <div class="forum-card" onclick="viewQuestion('${q.id}')">
+                                <div class="forum-header">
+                                    <div class="forum-avatar">${initials}</div>
+                                    <div class="forum-meta">
+                                        <h4>${q.user?.name || 'User'}</h4>
+                                        <span>${timeAgo}</span>
+                                    </div>
+                                </div>
+                                <h3>${q.title}</h3>
+                                <p>${q.content.substring(0, 150)}${q.content.length > 150 ? '...' : ''}</p>
+                                <div class="forum-stats">
+                                    <div class="forum-stat">
+                                        <i class="fas fa-comment"></i>
+                                        <span>${q.answer_count || 0} Jawaban</span>
+                                    </div>
+                                    <div class="forum-stat">
+                                        <i class="fas fa-tag"></i>
+                                        <span>${q.category || 'Umum'}</span>
+                                    </div>
+                                    <div class="forum-stat">
+                                        <i class="fas fa-heart"></i>
+                                        <span>${q.like_count || 0} Likes</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    document.getElementById('statQuestions').textContent = data.data.length;
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>Belum ada diskusi</p></div>';
+                }
+            } catch (err) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Gagal memuat diskusi</p></div>';
+            }
+        }
+
+        async function handleAsk(e) {
+            e.preventDefault();
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                closeModal('askModal');
+                openLoginModal();
+                return;
+            }
+
+            const btn = document.getElementById('askBtn');
+            btn.innerHTML = '<div class="loading"></div> Memposting...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/questions`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: document.getElementById('questionTitle').value,
+                        content: document.getElementById('questionContent').value,
+                        category: document.getElementById('questionCategory').value
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast('Pertanyaan berhasil diposting! 💬');
+                    closeModal('askModal');
+                    loadQuestions();
+                    e.target.reset();
+                } else {
+                    showToast(data.message || 'Gagal memposting pertanyaan', 'error');
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server', 'error');
+            }
+
+            btn.innerHTML = 'Posting Pertanyaan';
+            btn.disabled = false;
+        }
+
+        function viewQuestion(id) {
+            showToast('Detail pertanyaan akan segera tersedia! 📖');
+        }
+
+        async function loadAlerts() {
+            const container = document.getElementById('alertsContainer');
+            container.innerHTML = '<div class="empty-state"><div class="loading"></div><p>Memuat laporan...</p></div>';
+
+            try {
+                const res = await fetch(`${API_BASE}/alerts/map`);
+                const data = await res.json();
+
+                if (res.ok && data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.slice(0, 6).map(alert => {
+                        const severityClass = alert.severity || 'low';
+                        const severityText = {
+                            'high': 'Tinggi',
+                            'medium': 'Sedang',
+                            'low': 'Rendah'
+                        }[severityClass] || 'Rendah';
+
+                        return `
+                            <div class="alert-card ${severityClass}" onclick="viewAlertDetail('${alert.id}')">
+                                <div class="alert-header">
+                                    <h4>${alert.pest_name}</h4>
+                                    <span class="severity-badge severity-${severityClass}">${severityText}</span>
+                                </div>
+                                <p><i class="fas fa-map-marker-alt"></i> ${alert.city}</p>
+                                <p>${alert.description}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                                    <span style="color: var(--text-muted); font-size: 0.85rem;">
+                                        <i class="fas fa-check-circle"></i> ${alert.verification_count || 0} Verifikasi
+                                    </span>
+                                    <span style="color: var(--text-muted); font-size: 0.85rem;">
+                                        ${getTimeAgo(alert.created_at)}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    document.getElementById('statAlerts').textContent = data.data.length;
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-bug"></i><p>Belum ada laporan hama</p></div>';
+                }
+            } catch (err) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Gagal memuat laporan</p></div>';
+            }
+        }
+
+        async function handleReport(e) {
+            e.preventDefault();
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                closeModal('reportModal');
+                openLoginModal();
+                return;
+            }
+
+            const btn = document.getElementById('reportBtn');
+            btn.innerHTML = '<div class="loading"></div> Mengirim...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/alerts`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pest_name: document.getElementById('pestName').value,
+                        description: document.getElementById('pestDescription').value,
+                        city: document.getElementById('pestCity').value,
+                        severity: document.getElementById('pestSeverity').value
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast('Laporan hama berhasil dikirim! 🐛');
+                    closeModal('reportModal');
+                    loadAlerts();
+                    e.target.reset();
+                } else {
+                    showToast(data.message || 'Gagal mengirim laporan', 'error');
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server', 'error');
+            }
+
+            btn.innerHTML = 'Kirim Laporan';
+            btn.disabled = false;
+        }
+
+        async function viewAlertDetail(id) {
+            if (!id) return;
+            
+            try {
+                const res = await fetch(`${API_BASE}/alerts/${id}`);
+                const data = await res.json();
+                
+                if (res.ok && data.data) {
+                    const alert = data.data;
+                    const severityText = {
+                        'high': 'Tinggi',
+                        'medium': 'Sedang',
+                        'low': 'Rendah'
+                    }[alert.severity] || 'Rendah';
+                    
+                    showToast(`${alert.pest_name} di ${alert.city} - Tingkat: ${severityText}`);
+                    
+                }
+            } catch (err) {
+                console.error('Error loading alert detail:', err);
+            }
+        }
+
+        async function createReservation(productId, quantity, note) {
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                openLoginModal();
+                return null;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/market/reservations`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: quantity,
+                        note: note || ''
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast('Reservasi berhasil dibuat! 📦');
+                    return data.data;
+                } else {
+                    showToast(data.message || 'Gagal membuat reservasi', 'error');
+                    return null;
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server', 'error');
+                return null;
+            }
+        }
+
+        async function createOrder(productId, quantity, note) {
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                openLoginModal();
+                return null;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/market/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: quantity,
+                        note: note || ''
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast('Pesanan berhasil dibuat! 🛒');
+                    return data.data;
+                } else {
+                    showToast(data.message || 'Gagal membuat pesanan', 'error');
+                    return null;
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server', 'error');
+                return null;
+            }
+        }
+
+        async function loadMyReservations() {
+            if (!authToken) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/users/me/reservations`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.data) {
+                    console.log('My Reservations:', data.data);
+                    return data.data;
+                }
+            } catch (err) {
+                console.error('Error loading reservations:', err);
+            }
+            return [];
+        }
+
+        async function loadMyOrders() {
+            if (!authToken) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/users/me/orders`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.data) {
+                    console.log('My Orders:', data.data);
+                    return data.data;
+                }
+            } catch (err) {
+                console.error('Error loading orders:', err);
+            }
+            return [];
+        }
+
+        async function submitAnswer(questionId, content) {
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                openLoginModal();
+                return null;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/questions/${questionId}/answers`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast('Jawaban berhasil dikirim! 💬');
+                    return data.data;
+                } else {
+                    showToast(data.message || 'Gagal mengirim jawaban', 'error');
+                    return null;
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server', 'error');
+                return null;
+            }
+        }
+
+        async function toggleLike(questionId) {
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                openLoginModal();
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/questions/${questionId}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast(data.data.liked ? 'Pertanyaan disukai! ❤️' : 'Like dibatalkan');
+                    loadQuestions(); 
+                } else {
+                    showToast(data.message || 'Gagal toggle like', 'error');
+                }
+            } catch (err) {
+                showToast('Gagal terhubung ke server', 'error');
+            }
+        }
+
+        function getTimeAgo(dateString) {
+            if (!dateString) return 'Baru saja';
+            
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+
+            const intervals = {
+                tahun: 31536000,
+                bulan: 2592000,
+                minggu: 604800,
+                hari: 86400,
+                jam: 3600,
+                menit: 60
+            };
+
+            for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+                const interval = Math.floor(seconds / secondsInUnit);
+                if (interval >= 1) {
+                    return `${interval} ${unit} yang lalu`;
+                }
+            }
+
+            return 'Baru saja';
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function openRegisterModal() {
+            document.getElementById('registerModal').classList.add('active');
+        }
+
+        function openCreateProductModal() {
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                openLoginModal();
+                return;
+            }
+            document.getElementById('createProductModal').classList.add('active');
+        }
+
+        function openAskModal() {
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                openLoginModal();
+                return;
+            }
+            document.getElementById('askModal').classList.add('active');
+        }
+
+        function openReportModal() {
+            if (!authToken) {
+                showToast('Silakan login terlebih dahulu', 'error');
+                openLoginModal();
+                return;
+            }
+            document.getElementById('reportModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        function animateCounter(elementId, target) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 30);
+        }
+
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statsSection = entry.target;
+                    animateCounter('statUsers', Math.floor(Math.random() * 5000) + 1000);
+                    observer.unobserve(statsSection);
+                }
+            });
+        }, observerOptions);
+
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+
+        window.AgroHub = {
+            createReservation: typeof createReservation !== 'undefined' ? createReservation : undefined,
+            createOrder: typeof createOrder !== 'undefined' ? createOrder : undefined,
+            loadMyReservations: typeof loadMyReservations !== 'undefined' ? loadMyReservations : undefined,
+            loadMyOrders: typeof loadMyOrders !== 'undefined' ? loadMyOrders : undefined,
+            submitAnswer: typeof submitAnswer !== 'undefined' ? submitAnswer : undefined,
+            toggleLike: typeof toggleLike !== 'undefined' ? toggleLike : undefined,
+            viewAlertDetail: typeof viewAlertDetail !== 'undefined' ? viewAlertDetail : undefined
+        };
+
+        console.log("✅ AgroHub System Loaded Successfully");
+
+    </script>
+</body>
+</html>

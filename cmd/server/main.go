@@ -17,14 +17,15 @@ func main() {
 
 	db.AutoMigrate(
 		&domain.User{},
-		&domain.Product{}, 
+		&domain.Product{},
 		&domain.Article{},
-		&domain.Question{}, 
+		&domain.Question{},
 		&domain.Answer{},
-		&domain.QuestionLike{}, 
+		&domain.QuestionLike{},
 		&domain.Favorite{},
+		&domain.PestReport{},
+		&domain.MarketTransaction{},
 	)
-
 
 	userRepoGetByID := repository.NewGetUserByIDRepository(db)
 	userRepoGetByEmail := repository.NewGetUserByEmailRepository(db)
@@ -40,9 +41,14 @@ func main() {
 	prodRepoMetaCrops := repository.NewGetMetaCropsRepository(db)
 	prodRepoMetaRegions := repository.NewGetMetaRegionsRepository(db)
 
-	articlerepoCreate := repository.NewCreateArticleRepository(db)
-	articlerepoGetByID := repository.NewGetArticleByIDRepository(db)
-	articlerepoGetAll := repository.NewGetAllArticlesRepository(db)
+	marketRepoCreate := repository.NewCreateTransactionRepository(db)
+	marketRepoGetByID := repository.NewGetTransactionByIDRepository(db)
+	marketRepoGetByUser := repository.NewGetTransactionsByUserRepository(db)
+	marketRepoUpdateStatus := repository.NewUpdateTransactionStatusRepository(db)
+
+	articleRepoCreate := repository.NewCreateArticleRepository(db)
+	articleRepoGetByID := repository.NewGetArticleByIDRepository(db)
+	articleRepoGetAll := repository.NewGetAllArticlesRepository(db)
 
 	qRepoCreate := repository.NewCreateQuestionRepository(db)
 	qRepoGet := repository.NewGetAllQuestionsRepository(db)
@@ -51,6 +57,7 @@ func main() {
 	likeRepo := repository.NewToggleQuestionLikeRepository(db)
 	favRepo := repository.NewToggleFavoriteRepository(db)
 
+	pestRepo := repository.NewPestRepository(db)
 
 	createUserService := service.NewCreateUser(userRepoCreate, userRepoGetByEmail)
 	getUserByIDService := service.NewGetUserByID(userRepoGetByID)
@@ -66,10 +73,17 @@ func main() {
 	svcSearchProducts := service.NewSearchProductsService(prodRepoSearch)
 	svcMetaCrops := service.NewGetMetaCropsService(prodRepoMetaCrops)
 	svcMetaRegions := service.NewGetMetaRegionsService(prodRepoMetaRegions)
-	
-	svccreatearticle := service.NewCreateArticleService(articlerepoCreate)
-	svcgetarticlebyid := service.NewGetArticleByIDService(articlerepoGetByID)
-	svcgetallarticles := service.NewGetAllArticlesService(articlerepoGetAll)
+
+	svcCreateReservation := service.NewCreateReservationService(marketRepoCreate, prodRepoGetByID, prodRepoUpdate)
+	svcCreateOrder := service.NewCreateOrderService(marketRepoCreate, prodRepoGetByID, prodRepoUpdate)
+	svcGetMyReservations := service.NewGetUserTransactionsService(marketRepoGetByUser, domain.TypeReservation)
+	svcGetMyOrders := service.NewGetUserTransactionsService(marketRepoGetByUser, domain.TypeOrder)
+	svcGetTransDetail := service.NewGetTransactionDetailService(marketRepoGetByID)
+	svcUpdateTransStatus := service.NewUpdateTransactionStatusService(marketRepoUpdateStatus)
+
+	svcCreateArticle := service.NewCreateArticleService(articleRepoCreate)
+	svcGetArticleByID := service.NewGetArticleByIDService(articleRepoGetByID)
+	svcGetAllArticles := service.NewGetAllArticlesService(articleRepoGetAll)
 
 	svcCreateQ := service.NewCreateQuestion(qRepoCreate)
 	svcGetFeed := service.NewGetFeed(qRepoGet)
@@ -78,7 +92,8 @@ func main() {
 	svcLike := service.NewToggleLike(likeRepo)
 	svcFav := service.NewToggleFav(favRepo)
 
-	
+	pestService := service.NewPestService(pestRepo)
+
 	log.SetFlags(0)
 	mux := http.NewServeMux()
 
@@ -94,12 +109,23 @@ func main() {
 	mux.HandleFunc("PUT /api/v1/market/products/{id}", middleware.AuthMiddleware(handle.HandleUpdateProduct(svcUpdateProduct)))
 	mux.HandleFunc("DELETE /api/v1/market/products/{id}", middleware.AuthMiddleware(handle.HandleDeleteProduct(svcDeleteProduct)))
 	mux.HandleFunc("POST /api/v1/market/products/{id}/upload", middleware.AuthMiddleware(handle.HandleUploadProductImage(svcUploadImage)))
+
 	mux.HandleFunc("GET /api/v1/market/search", handle.HandleSearchProducts(svcSearchProducts))
 	mux.HandleFunc("GET /api/v1/market/meta/crops", handle.HandleGetMetaCrops(svcMetaCrops))
 	mux.HandleFunc("GET /api/v1/market/meta/regions", handle.HandleGetMetaRegions(svcMetaRegions))
-	mux.HandleFunc("POST /api/v1/articles", middleware.AuthMiddleware(handle.HandleCreateArticle(svccreatearticle)))
-	mux.HandleFunc("GET /api/v1/articles", handle.HandleGetAllArticles(svcgetallarticles))
-	mux.HandleFunc("GET /api/v1/articles/{id}", handle.HandleGetArticleByID(svcgetarticlebyid))
+
+	mux.HandleFunc("POST /api/v1/market/reservations", middleware.AuthMiddleware(handle.HandleCreateReservation(svcCreateReservation)))
+	mux.HandleFunc("POST /api/v1/market/orders", middleware.AuthMiddleware(handle.HandleCreateOrder(svcCreateOrder)))
+	mux.HandleFunc("GET /api/v1/users/me/reservations", middleware.AuthMiddleware(handle.HandleGetMyReservations(svcGetMyReservations)))
+	mux.HandleFunc("GET /api/v1/users/me/orders", middleware.AuthMiddleware(handle.HandleGetMyOrders(svcGetMyOrders)))
+	mux.HandleFunc("GET /api/v1/market/orders/{id}", middleware.AuthMiddleware(handle.HandleGetTransactionDetail(svcGetTransDetail)))
+	mux.HandleFunc("POST /api/v1/market/reservations/{id}/confirm", middleware.AuthMiddleware(handle.HandleConfirmReservation(svcUpdateTransStatus)))
+	mux.HandleFunc("POST /api/v1/market/reservations/{id}/cancel", middleware.AuthMiddleware(handle.HandleCancelReservation(svcUpdateTransStatus)))
+	mux.HandleFunc("PATCH /api/v1/market/orders/{id}/status", middleware.AuthMiddleware(handle.HandleUpdateOrderStatus(svcUpdateTransStatus)))
+
+	mux.HandleFunc("POST /api/v1/articles", middleware.AuthMiddleware(handle.HandleCreateArticle(svcCreateArticle)))
+	mux.HandleFunc("GET /api/v1/articles", handle.HandleGetAllArticles(svcGetAllArticles))
+	mux.HandleFunc("GET /api/v1/articles/{id}", handle.HandleGetArticleByID(svcGetArticleByID))
 
 	mux.HandleFunc("GET /api/v1/questions", middleware.AuthMiddlewareOptional(handle.HandleGetFeed(svcGetFeed)))
 	mux.HandleFunc("POST /api/v1/questions", middleware.AuthMiddleware(handle.HandleCreateQuestion(svcCreateQ)))
@@ -107,6 +133,11 @@ func main() {
 	mux.HandleFunc("POST /api/v1/questions/{id}/answers", middleware.AuthMiddleware(handle.HandleAddAnswer(svcAddAns)))
 	mux.HandleFunc("POST /api/v1/questions/{id}/like", middleware.AuthMiddleware(handle.HandleToggleLike(svcLike)))
 	mux.HandleFunc("POST /api/v1/questions/{id}/favorite", middleware.AuthMiddleware(handle.HandleToggleFav(svcFav)))
+
+	mux.HandleFunc("POST /api/v1/alerts", middleware.AuthMiddleware(handle.HandleCreateAlert(pestService)))
+	mux.HandleFunc("GET /api/v1/alerts/map", handle.HandleGetMapData(pestService))
+	mux.HandleFunc("GET /api/v1/alerts/{id}", handle.HandleGetAlertDetail(pestService))
+	mux.HandleFunc("POST /api/v1/alerts/{id}/verify", middleware.AuthMiddleware(handle.HandleVerifyAlert(pestService)))
 
 	var finalHandler http.Handler = mux
 	finalHandler = middleware.Logging(finalHandler)
