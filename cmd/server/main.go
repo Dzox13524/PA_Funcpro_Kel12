@@ -46,9 +46,9 @@ func main() {
 	marketRepoGetByUser := repository.NewGetTransactionsByUserRepository(db)
 	marketRepoUpdateStatus := repository.NewUpdateTransactionStatusRepository(db)
 
-	articleRepoCreate := repository.NewCreateArticleRepository(db)
-	articleRepoGetByID := repository.NewGetArticleByIDRepository(db)
-	articleRepoGetAll := repository.NewGetAllArticlesRepository(db)
+	articlerepoCreate := repository.NewCreateArticleRepository(db)
+	articlerepoGetByID := repository.NewGetArticleByIDRepository(db)
+	articlerepoGetAll := repository.NewGetAllArticlesRepository(db)
 
 	qRepoCreate := repository.NewCreateQuestionRepository(db)
 	qRepoGet := repository.NewGetAllQuestionsRepository(db)
@@ -81,9 +81,9 @@ func main() {
 	svcGetTransDetail := service.NewGetTransactionDetailService(marketRepoGetByID)
 	svcUpdateTransStatus := service.NewUpdateTransactionStatusService(marketRepoUpdateStatus)
 
-	svcCreateArticle := service.NewCreateArticleService(articleRepoCreate)
-	svcGetArticleByID := service.NewGetArticleByIDService(articleRepoGetByID)
-	svcGetAllArticles := service.NewGetAllArticlesService(articleRepoGetAll)
+	svccreatearticle := service.NewCreateArticleService(articlerepoCreate)
+	svcgetarticlebyid := service.NewGetArticleByIDService(articlerepoGetByID)
+	svcgetallarticles := service.NewGetAllArticlesService(articlerepoGetAll)
 
 	svcCreateQ := service.NewCreateQuestion(qRepoCreate)
 	svcGetFeed := service.NewGetFeed(qRepoGet)
@@ -123,9 +123,9 @@ func main() {
 	mux.HandleFunc("POST /api/v1/market/reservations/{id}/cancel", middleware.AuthMiddleware(handle.HandleCancelReservation(svcUpdateTransStatus)))
 	mux.HandleFunc("PATCH /api/v1/market/orders/{id}/status", middleware.AuthMiddleware(handle.HandleUpdateOrderStatus(svcUpdateTransStatus)))
 
-	mux.HandleFunc("POST /api/v1/articles", middleware.AuthMiddleware(handle.HandleCreateArticle(svcCreateArticle)))
-	mux.HandleFunc("GET /api/v1/articles", handle.HandleGetAllArticles(svcGetAllArticles))
-	mux.HandleFunc("GET /api/v1/articles/{id}", handle.HandleGetArticleByID(svcGetArticleByID))
+	mux.HandleFunc("POST /api/v1/articles", middleware.AuthMiddleware(handle.HandleCreateArticle(svccreatearticle)))
+	mux.HandleFunc("GET /api/v1/articles", handle.HandleGetAllArticles(svcgetallarticles))
+	mux.HandleFunc("GET /api/v1/articles/{id}", handle.HandleGetArticleByID(svcgetarticlebyid))
 
 	mux.HandleFunc("GET /api/v1/questions", middleware.AuthMiddlewareOptional(handle.HandleGetFeed(svcGetFeed)))
 	mux.HandleFunc("POST /api/v1/questions", middleware.AuthMiddleware(handle.HandleCreateQuestion(svcCreateQ)))

@@ -1563,10 +1563,11 @@
             container.innerHTML = '<div class="empty-state"><div class="loading"></div><p>Memuat produk...</p></div>';
 
             try {
-                // Tentukan URL berdasarkan apakah ada query pencarian atau tidak
+
                 let url = `${API_BASE}/market/products`;
                 if (query) {
-                    url = `${API_BASE}/market/products/search?q=${encodeURIComponent(query)}`;
+
+                    url = `${API_BASE}/market/search?q=${encodeURIComponent(query)}`;
                 }
 
                 const res = await fetch(url);
