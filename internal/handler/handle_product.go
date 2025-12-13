@@ -114,8 +114,8 @@ func HandleUploadProductImage(uploadService service.UploadProductImageFunc) http
 func HandleSearchProducts(searchService service.SearchProductsServiceFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query().Get("q")      
-		category := r.URL.Query().Get("crop")   
-		location := r.URL.Query().Get("region") 
+		category := r.URL.Query().Get("category") 
+		location := r.URL.Query().Get("location")
 		products, err := searchService(r.Context(), query, category, location)
 		if err != nil {
 			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)

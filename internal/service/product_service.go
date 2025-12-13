@@ -67,6 +67,8 @@ func NewUpdateProductService(updateRepo repository.UpdateProductRepoFunc, getByI
 		if req.Description != "" { updates["description"] = req.Description }
 		if req.Price > 0 { updates["price"] = req.Price }
 		if req.Stock >= 0 { updates["stock"] = req.Stock }
+		if req.Category != "" { updates["category"] = req.Category }
+		if req.Location != "" { updates["location"] = req.Location }
 		updates["updated_at"] = time.Now()
 
 		return updateRepo(ctx, id, updates)

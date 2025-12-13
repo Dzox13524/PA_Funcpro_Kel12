@@ -384,7 +384,6 @@
             border: 1px solid rgba(16, 185, 129, 0.1);
             cursor: pointer;
             position: relative;
-            /* Untuk tombol aksi */
         }
 
         .product-card:hover {
@@ -484,7 +483,6 @@
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
         }
 
-        /* --- TAMBAHAN STYLE UNTUK TOMBOL EDIT & DELETE --- */
         .btn-edit {
             background: var(--accent);
             color: var(--dark);
@@ -1563,7 +1561,10 @@
             try {
                 let url;
                 if (query || crop || region) {
-                    url = `${API_BASE}/market/search?q=${encodeURIComponent(query)}&crop=${encodeURIComponent(crop)}&region=${encodeURIComponent(region)}`;
+                    // PERBAIKAN UTAMA: Ganti nama parameter supaya sesuai dengan backend (handle_product.go)
+                    // crop -> category
+                    // region -> location
+                    url = `${API_BASE}/market/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(crop)}&location=${encodeURIComponent(region)}`;
                 } else {
                     url = `${API_BASE}/market/products`;
                 }
