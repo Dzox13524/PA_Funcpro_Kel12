@@ -383,6 +383,8 @@
             transition: all 0.3s ease;
             border: 1px solid rgba(16, 185, 129, 0.1);
             cursor: pointer;
+            position: relative;
+            /* Untuk tombol aksi */
         }
 
         .product-card:hover {
@@ -480,6 +482,29 @@
         .btn-small:hover {
             transform: translateX(5px);
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        /* --- TAMBAHAN STYLE UNTUK TOMBOL EDIT & DELETE --- */
+        .btn-edit {
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
         }
 
         .forum {
@@ -1085,15 +1110,28 @@
                 <h2>Marketplace Produk</h2>
                 <p>Temukan berbagai produk pertanian berkualitas</p>
             </div>
-            <div class="search-wrapper" style="max-width: 600px; margin: 0 auto 3rem; position: relative;">
-                <input type="text" id="searchInput" placeholder="Cari produk pertanian (contoh: pupuk, bibit)..."
-                    onkeyup="handleSearch(event)"
-                    style="width: 100%; padding: 1rem 1.5rem; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.2); background: var(--dark-light); color: var(--text); padding-right: 3.5rem; font-size: 1rem; transition: all 0.3s ease;">
-                <button onclick="handleSearch({target: document.getElementById('searchInput')})"
-                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--primary); font-size: 1.2rem; cursor: pointer; padding: 10px;">
+
+            <div class="search-wrapper"
+                style="max-width: 1000px; margin: 0 auto 3rem; display: flex; gap: 10px; flex-wrap: wrap;">
+                <input type="text" id="searchInput" placeholder="Cari nama produk..." onkeyup="handleSearch()"
+                    style="flex: 2; min-width: 200px; padding: 1rem 1.5rem; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.2); background: var(--dark-light); color: var(--text);">
+
+                <select id="searchCrop" onchange="handleSearch()"
+                    style="flex: 1; min-width: 150px; padding: 0 1.5rem; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.2); background: var(--dark-light); color: var(--text);">
+                    <option value="">Semua Tanaman</option>
+                </select>
+
+                <select id="searchRegion" onchange="handleSearch()"
+                    style="flex: 1; min-width: 150px; padding: 0 1.5rem; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.2); background: var(--dark-light); color: var(--text);">
+                    <option value="">Semua Wilayah</option>
+                </select>
+
+                <button onclick="handleSearch()"
+                    style="padding: 0 1.5rem; background: var(--primary); border: none; border-radius: 50px; color: white; cursor: pointer;">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
+
             <div class="products-grid" id="productsContainer">
                 <div class="empty-state">
                     <div class="loading"></div>
@@ -1287,6 +1325,18 @@
                     <textarea id="productDescription" placeholder="Jelaskan detail produk Anda..." required></textarea>
                 </div>
                 <div class="form-group">
+                    <label>Jenis Tanaman</label>
+                    <select id="productCrop" required>
+                        <option value="">Pilih Jenis Tanaman</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Wilayah</label>
+                    <select id="productRegion" required>
+                        <option value="">Pilih Wilayah</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Harga (Rp)</label>
                     <input type="number" id="productPrice" placeholder="50000" required>
                 </div>
@@ -1298,9 +1348,42 @@
                     <label>Gambar Produk (Opsional)</label>
                     <input type="file" id="productImage" accept="image/*">
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;" id="createProductBtn">Tambah
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="createProductBtnSubmit">Tambah
                     Produk</button>
             </form>
+        </div>
+    </div>
+
+    <div class="modal" id="editProductModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('editProductModal')">&times;</span>
+            <h2><i class="fas fa-edit"></i> Edit Produk</h2>
+            <form onsubmit="handleUpdateProduct(event)">
+                <input type="hidden" id="editProductId">
+                <div class="form-group"><label>Nama Produk</label><input type="text" id="editProductName" required>
+                </div>
+                <div class="form-group"><label>Deskripsi</label><textarea id="editProductDescription"
+                        required></textarea></div>
+                <div class="form-group"><label>Jenis Tanaman</label><select id="editProductCrop" required>
+                        <option value="">Pilih Jenis Tanaman</option>
+                    </select></div>
+                <div class="form-group"><label>Wilayah</label><select id="editProductRegion" required>
+                        <option value="">Pilih Wilayah</option>
+                    </select></div>
+                <div class="form-group"><label>Harga (Rp)</label><input type="number" id="editProductPrice" required>
+                </div>
+                <div class="form-group"><label>Stok</label><input type="number" id="editProductStock" required></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="productDetailModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('productDetailModal')">&times;</span>
+            <div id="productDetailContent">
+                <div class="loading"></div>
+            </div>
         </div>
     </div>
 
@@ -1374,8 +1457,6 @@
         const API_BASE = 'http://localhost:8080/api/v1';
         let authToken = localStorage.getItem('authToken') || null;
         let currentUser = null;
-
-        // VARIABEL GLOBAL UNTUK PENCARIAN (DEBOUNCE)
         let searchTimeout;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1386,7 +1467,53 @@
             loadQuestions();
             loadAlerts();
             createParticles();
+            loadProductMeta();
         });
+
+        // ==========================================
+        // UPDATE: DATA WILAYAH JATIM & TANAMAN (MANUAL)
+        // ==========================================
+        async function loadProductMeta() {
+            const wilayahJatim = [
+                "Bangkalan", "Banyuwangi", "Blitar", "Bojonegoro", "Bondowoso",
+                "Gresik", "Jember", "Jombang", "Kediri", "Lamongan",
+                "Lumajang", "Madiun", "Magetan", "Malang", "Mojokerto",
+                "Nganjuk", "Ngawi", "Pacitan", "Pamekasan", "Pasuruan",
+                "Ponorogo", "Probolinggo", "Sampang", "Sidoarjo", "Situbondo",
+                "Sumenep", "Trenggalek", "Tuban", "Tulungagung",
+                "Kota Batu", "Kota Blitar", "Kota Kediri", "Kota Madiun",
+                "Kota Malang", "Kota Mojokerto", "Kota Pasuruan",
+                "Kota Probolinggo", "Kota Surabaya"
+            ];
+
+            const jenisTanaman = [
+                "Padi", "Jagung", "Kedelai", "Cabai Rawit", "Cabai Merah",
+                "Bawang Merah", "Bawang Putih", "Tomat", "Wortel", "Kubis",
+                "Kentang", "Tebu", "Tembakau", "Kopi", "Kakao"
+            ];
+
+            try {
+                const cropSelect = document.getElementById('productCrop');
+                const regionSelect = document.getElementById('productRegion');
+                const searchCropSelect = document.getElementById('searchCrop');
+                const searchRegionSelect = document.getElementById('searchRegion');
+                const editCropSelect = document.getElementById('editProductCrop');
+                const editRegionSelect = document.getElementById('editProductRegion');
+
+                const cropOpts = jenisTanaman.map(item => `<option value="${item}">${item}</option>`).join('');
+                const regionOpts = wilayahJatim.map(item => `<option value="${item}">${item}</option>`).join('');
+
+                if (cropSelect) cropSelect.innerHTML = `<option value="">Pilih Jenis Tanaman</option>` + cropOpts;
+                if (regionSelect) regionSelect.innerHTML = `<option value="">Pilih Wilayah</option>` + regionOpts;
+                if (searchCropSelect) searchCropSelect.innerHTML = `<option value="">Semua Tanaman</option>` + cropOpts;
+                if (searchRegionSelect) searchRegionSelect.innerHTML = `<option value="">Semua Wilayah</option>` + regionOpts;
+                if (editCropSelect) editCropSelect.innerHTML = `<option value="">Pilih Jenis Tanaman</option>` + cropOpts;
+                if (editRegionSelect) editRegionSelect.innerHTML = `<option value="">Pilih Wilayah</option>` + regionOpts;
+
+            } catch (err) {
+                console.error('Gagal memuat data meta:', err);
+            }
+        }
 
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
@@ -1419,25 +1546,220 @@
         }
 
         // ==========================================
-        // FITUR PENCARIAN PRODUK
+        // UPDATE: LOAD PRODUK DENGAN TOMBOL AKSI
         // ==========================================
 
-        function handleSearch(e) {
-            const query = e.target.value;
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                loadProducts(query);
-            }, 500);
+        async function loadProducts(query = '') {
+            if (!query) {
+                query = document.getElementById('searchInput').value;
+            }
+
+            const crop = document.getElementById('searchCrop') ? document.getElementById('searchCrop').value : '';
+            const region = document.getElementById('searchRegion') ? document.getElementById('searchRegion').value : '';
+
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '<div class="empty-state"><div class="loading"></div><p>Memuat produk...</p></div>';
+
+            try {
+                let url;
+                if (query || crop || region) {
+                    url = `${API_BASE}/market/search?q=${encodeURIComponent(query)}&crop=${encodeURIComponent(crop)}&region=${encodeURIComponent(region)}`;
+                } else {
+                    url = `${API_BASE}/market/products`;
+                }
+
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (res.ok && data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.map(p => {
+                        const isOwner = currentUser && (p.seller_id === currentUser.id || p.SellerID === currentUser.id);
+                        let actionButtons = '';
+
+                        if (isOwner) {
+                            actionButtons = `
+                                <button class="btn-edit" onclick="openEditProductModal('${p.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-delete" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+                            `;
+                        }
+
+                        return `
+                        <div class="product-card">
+                            <div class="product-image" onclick="viewProductDetail('${p.id}')">
+                                ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '<i class="fas fa-seedling"></i>'}
+                            </div>
+                            <div class="product-info">
+                                <h3 onclick="viewProductDetail('${p.id}')">${p.name}</h3>
+                                <p>${p.description || 'Tidak ada deskripsi'}</p>
+                                <div class="product-footer">
+                                    <div>
+                                        <div class="product-price">Rp ${Number(p.price).toLocaleString()}</div>
+                                        <div class="product-stock">Stok: ${p.stock}</div>
+                                    </div>
+                                    <div style="display:flex; align-items:center;">
+                                        <button class="btn-small" onclick="viewProductDetail('${p.id}')">Detail</button>
+                                        ${actionButtons}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `}).join('');
+
+                    if (!query && !crop && !region) {
+                        document.getElementById('statProducts').textContent = data.data.length;
+                    }
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>Produk tidak ditemukan</p>
+                            ${(query || crop || region) ? `<button class="btn-secondary" onclick="resetSearch()" style="margin-top:1rem;">Tampilkan Semua</button>` : ''}
+                        </div>`;
+                }
+            } catch (err) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Gagal memuat produk</p></div>';
+            }
         }
 
-        function resetSearch() {
-            document.getElementById('searchInput').value = '';
-            loadProducts();
+        // ==========================================
+        // FUNGSI BARU: DELETE, DETAIL, EDIT
+        // ==========================================
+
+        async function deleteProduct(id) {
+            if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/market/products/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (res.ok) {
+                    showToast('Produk berhasil dihapus');
+                    loadProducts();
+                } else {
+                    showToast('Gagal menghapus produk', 'error');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan server', 'error');
+            }
+        }
+
+        async function viewProductDetail(id) {
+            const modal = document.getElementById('productDetailModal');
+            const content = document.getElementById('productDetailContent');
+            content.innerHTML = '<div class="loading"></div>';
+            modal.classList.add('active');
+
+            try {
+                const res = await fetch(`${API_BASE}/market/products/${id}`);
+                const data = await res.json();
+
+                if (res.ok && data.data) {
+                    const p = data.data;
+                    content.innerHTML = `
+                        <h2 style="color:var(--primary); margin-bottom:1rem;">${p.name}</h2>
+                        ${p.image_url ? `<img src="${p.image_url}" style="width:100%; max-height:300px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">` : ''}
+                        
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                            <div><strong>Harga:</strong> <br>Rp ${Number(p.price).toLocaleString()}</div>
+                            <div><strong>Stok:</strong> <br>${p.stock} unit</div>
+                            <div><strong>Kategori:</strong> <br>${p.category || '-'}</div>
+                            <div><strong>Lokasi:</strong> <br>${p.location || '-'}</div>
+                        </div>
+                        
+                        <div style="background:var(--dark); padding:1rem; border-radius:10px; margin-bottom:1rem;">
+                            <strong>Deskripsi:</strong>
+                            <p style="margin-top:0.5rem; color:var(--text-muted);">${p.description}</p>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="buyProduct('${p.id}')" style="width:100%;">Beli Sekarang</button>
+                    `;
+                }
+            } catch (err) {
+                content.innerHTML = '<p style="text-align:center;">Gagal memuat detail produk.</p>';
+            }
+        }
+
+        async function openEditProductModal(id) {
+            try {
+                const res = await fetch(`${API_BASE}/market/products/${id}`);
+                const data = await res.json();
+
+                if (res.ok && data.data) {
+                    const p = data.data;
+                    document.getElementById('editProductId').value = p.id;
+                    document.getElementById('editProductName').value = p.name;
+                    document.getElementById('editProductDescription').value = p.description;
+                    document.getElementById('editProductPrice').value = p.price;
+                    document.getElementById('editProductStock').value = p.stock;
+                    if (document.getElementById('editProductCrop')) document.getElementById('editProductCrop').value = p.category || '';
+                    if (document.getElementById('editProductRegion')) document.getElementById('editProductRegion').value = p.location || '';
+
+                    document.getElementById('editProductModal').classList.add('active');
+                }
+            } catch (err) {
+                showToast('Gagal memuat data edit', 'error');
+            }
+        }
+
+        async function handleUpdateProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('editProductId').value;
+            const btn = e.target.querySelector('button');
+            btn.innerHTML = 'Menyimpan...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/market/products/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: document.getElementById('editProductName').value,
+                        description: document.getElementById('editProductDescription').value,
+                        price: parseInt(document.getElementById('editProductPrice').value),
+                        stock: parseInt(document.getElementById('editProductStock').value),
+                        category: document.getElementById('editProductCrop').value,
+                        location: document.getElementById('editProductRegion').value
+                    })
+                });
+
+                if (res.ok) {
+                    showToast('Produk berhasil diperbarui');
+                    closeModal('editProductModal');
+                    loadProducts();
+                } else {
+                    const data = await res.json();
+                    showToast(data.message || 'Gagal update produk', 'error');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan server', 'error');
+            }
+
+            btn.innerHTML = 'Simpan Perubahan';
+            btn.disabled = false;
         }
 
         // ==========================================
         // AUTHENTICATION
         // ==========================================
+
+        function handleSearch(e) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadProducts();
+            }, 500);
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            if (document.getElementById('searchCrop')) document.getElementById('searchCrop').value = '';
+            if (document.getElementById('searchRegion')) document.getElementById('searchRegion').value = '';
+            loadProducts();
+        }
 
         async function handleRegister(e) {
             e.preventDefault();
@@ -1555,60 +1877,8 @@
         }
 
         // ==========================================
-        // MARKETPLACE LOGIC (UPDATED WITH SEARCH)
+        // CREATE PRODUCT
         // ==========================================
-
-        async function loadProducts(query = '') {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '<div class="empty-state"><div class="loading"></div><p>Memuat produk...</p></div>';
-
-            try {
-
-                let url = `${API_BASE}/market/products`;
-                if (query) {
-
-                    url = `${API_BASE}/market/search?q=${encodeURIComponent(query)}`;
-                }
-
-                const res = await fetch(url);
-                const data = await res.json();
-
-                if (res.ok && data.data && data.data.length > 0) {
-                    container.innerHTML = data.data.map(p => `
-                        <div class="product-card">
-                            <div class="product-image">
-                                ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '<i class="fas fa-seedling"></i>'}
-                            </div>
-                            <div class="product-info">
-                                <h3>${p.name}</h3>
-                                <p>${p.description || 'Tidak ada deskripsi'}</p>
-                                <div class="product-footer">
-                                    <div>
-                                        <div class="product-price">Rp ${Number(p.price).toLocaleString()}</div>
-                                        <div class="product-stock">Stok: ${p.stock}</div>
-                                    </div>
-                                    <button class="btn-small" onclick="buyProduct('${p.id}')">Beli</button>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-
-                    // Update statistik hanya jika menampilkan semua produk
-                    if (!query) {
-                        document.getElementById('statProducts').textContent = data.data.length;
-                    }
-                } else {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                            <p>Produk "${query}" tidak ditemukan</p>
-                            ${query ? `<button class="btn-secondary" onclick="resetSearch()" style="margin-top:1rem;">Tampilkan Semua</button>` : ''}
-                        </div>`;
-                }
-            } catch (err) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Gagal memuat produk</p></div>';
-            }
-        }
 
         async function handleCreateProduct(e) {
             e.preventDefault();
@@ -1617,11 +1887,12 @@
                 return;
             }
 
-            const btn = document.getElementById('createProductBtn');
+            const btn = document.getElementById('createProductBtnSubmit');
             btn.innerHTML = '<div class="loading"></div> Menambah...';
             btn.disabled = true;
 
             try {
+                // UPDATE: Mengambil value dari dropdown crop & region dengan nama key yang benar
                 const res = await fetch(`${API_BASE}/market/products`, {
                     method: 'POST',
                     headers: {
@@ -1632,7 +1903,9 @@
                         name: document.getElementById('productName').value,
                         description: document.getElementById('productDescription').value,
                         price: parseInt(document.getElementById('productPrice').value),
-                        stock: parseInt(document.getElementById('productStock').value)
+                        stock: parseInt(document.getElementById('productStock').value),
+                        category: document.getElementById('productCrop').value,
+                        location: document.getElementById('productRegion').value
                     })
                 });
 

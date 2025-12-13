@@ -12,7 +12,7 @@ type GetAllProductsRepoFunc func(ctx context.Context) ([]domain.Product, error)
 type GetProductByIDRepoFunc func(ctx context.Context, id string) (domain.Product, error)
 type UpdateProductRepoFunc func(ctx context.Context, id string, updates map[string]interface{}) (domain.Product, error)
 type DeleteProductRepoFunc func(ctx context.Context, id string) error
-type SearchProductsRepoFunc func(ctx context.Context, query string) ([]domain.Product, error)
+type SearchProductsRepoFunc func(ctx context.Context, query, category, location string) ([]domain.Product, error)
 type GetMetaCropsRepoFunc func(ctx context.Context) ([]string, error)
 type GetMetaRegionsRepoFunc func(ctx context.Context) ([]string, error)
 
@@ -58,14 +58,21 @@ func NewDeleteProductRepository(db *gorm.DB) DeleteProductRepoFunc {
 		return db.WithContext(ctx).Delete(&domain.Product{}, "id = ?", id).Error
 	}
 }
-
 func NewSearchProductsRepository(db *gorm.DB) SearchProductsRepoFunc {
-	return func(ctx context.Context, query string) ([]domain.Product, error) {
+	return func(ctx context.Context, query, category, location string) ([]domain.Product, error) {
 		var products []domain.Product
-		searchPattern := "%" + query + "%"
-		result := db.WithContext(ctx).
-			Where("name LIKE ? OR description LIKE ?", searchPattern, searchPattern).
-			Find(&products)
+		dbQuery := db.WithContext(ctx)
+		if query != "" {
+			searchPattern := "%" + query + "%"
+			dbQuery = dbQuery.Where("name LIKE ? OR description LIKE ?", searchPattern, searchPattern)
+		}
+		if category != "" {
+			dbQuery = dbQuery.Where("category = ?", category)
+		}
+		if location != "" {
+			dbQuery = dbQuery.Where("location = ?", location)
+		}
+		result := dbQuery.Find(&products)
 		return products, result.Error
 	}
 }

@@ -19,7 +19,7 @@ type GetProductByIDServiceFunc func(ctx context.Context, id string) (domain.Prod
 type UpdateProductServiceFunc func(ctx context.Context, id string, req domain.UpdateProductRequest, sellerID string) (domain.Product, error)
 type DeleteProductServiceFunc func(ctx context.Context, id string, sellerID string) error
 type UploadProductImageFunc func(ctx context.Context, id string, sellerID string, file io.Reader) (string, error)
-type SearchProductsServiceFunc func(ctx context.Context, query string) ([]domain.Product, error)
+type SearchProductsServiceFunc func(ctx context.Context, query, category, location string) ([]domain.Product, error)
 type GetMetaCropsServiceFunc func(ctx context.Context) ([]string, error)
 type GetMetaRegionsServiceFunc func(ctx context.Context) ([]string, error)
 
@@ -117,8 +117,8 @@ func NewUploadProductImageService(getByIDRepo repository.GetProductByIDRepoFunc,
 	}
 }
 func NewSearchProductsService(searchRepo repository.SearchProductsRepoFunc) SearchProductsServiceFunc {
-	return func(ctx context.Context, query string) ([]domain.Product, error) {
-		return searchRepo(ctx, query)
+	return func(ctx context.Context, query, category, location string) ([]domain.Product, error) {
+		return searchRepo(ctx, query, category, location)
 	}
 }
 func NewGetMetaCropsService(getMetaCropsRepo repository.GetMetaCropsRepoFunc) GetMetaCropsServiceFunc {
