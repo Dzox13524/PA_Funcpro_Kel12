@@ -10,98 +10,82 @@ import (
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/service"
 )
 
-type CreateUserRequest struct {
-	Name     string
-	Email    string
-	Password string
-}
-
 func HandleCreateUser(createUser service.CreateUserFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req CreateUserRequest
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
+		var req domain.CreateUserRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Format JSON tidak valid!", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Format JSON tidak valid!")
 		}
 
 		newUser, err := createUser(r.Context(), req.Name, req.Email, req.Password)
 		if err != nil {
-			response.WriteJSON(w, http.StatusConflict, err.Error(), nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusConflict, err.Error())
 		}
 
-		response.WriteJSON(w, http.StatusCreated, "success_created", newUser)
-	}
+		return http.StatusCreated, newUser, nil
+	})
 }
 
 func HandleLogin(loginService service.LoginFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		var req domain.LoginRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid Request", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid Request")
 		}
 
 		authResp, err := loginService(r.Context(), req.Email, req.Password)
 		if err != nil {
-			response.WriteJSON(w, http.StatusUnauthorized, err.Error(), nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, err.Error())
 		}
 
-		response.WriteJSON(w, http.StatusOK, "login_success", authResp)
-	}
+		return http.StatusOK, authResp, nil
+	})
 }
 
 func HandleGetMe(getUserByID service.GetUserByIDFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		if userID == "" {
-			response.WriteJSON(w, http.StatusUnauthorized, "Unauthorized", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
 		}
 
 		user, err := getUserByID(r.Context(), userID)
 		if err != nil {
-			response.WriteJSON(w, http.StatusNotFound, "User not found", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusNotFound, "User not found")
 		}
 
-		response.WriteJSON(w, http.StatusOK, "success", user)
-	}
+		return http.StatusOK, user, nil
+	})
 }
 
 func HandleUpdateMe(updateUser service.UpdateUserFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		if userID == "" {
-			response.WriteJSON(w, http.StatusUnauthorized, "Unauthorized", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
 		}
 
 		var req domain.UpdateUserRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid JSON", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid JSON")
 		}
 
 		updatedUser, err := updateUser(r.Context(), userID, req.Name)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 
-		response.WriteJSON(w, http.StatusOK, "profile_updated", updatedUser)
-	}
+		return http.StatusOK, updatedUser, nil
+	})
 }
 
 func HandleGetUserByID(getUserByID service.GetUserByIDFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 		user, err := getUserByID(r.Context(), id)
 		if err != nil {
-			response.WriteJSON(w, http.StatusNotFound, "User tidak ditemukan", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusNotFound, "User tidak ditemukan")
 		}
-		response.WriteJSON(w, http.StatusOK, "success", user)
-	}
+		return http.StatusOK, user, nil
+	})
 }

@@ -4,133 +4,118 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/domain"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/middleware"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/response"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/service"
 )
 
-type CreateQuestionReq struct {
-	Title    string `json:"title"`
-	Content  string `json:"content"`
-	Category string `json:"category"`
-}
-
-type CreateAnswerReq struct {
-	Content string `json:"content"`
-}
-
 func HandleCreateQuestion(svc service.CreateQuestionFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		if userID == "" {
-			response.WriteJSON(w, http.StatusUnauthorized, "Unauthorized", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
 		}
 
-		var req CreateQuestionReq
+		var req domain.CreateQuestionReq
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid JSON", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid JSON")
 		}
 
 		res, err := svc(r.Context(), userID, req.Title, req.Content, req.Category)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusCreated, "Question created", res)
-	}
+		
+		return http.StatusCreated, res, nil
+	})
 }
 
 func HandleGetFeed(svc service.GetFeedFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		userID := middleware.GetUserIDFromContext(r.Context()) // Boleh kosong jika guest
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
+		userID := middleware.GetUserIDFromContext(r.Context())
+		
 		res, err := svc(r.Context(), userID)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "Success", res)
-	}
+		
+		return http.StatusOK, res, nil
+	})
 }
 
 func HandleGetQuestionDetail(svc service.GetQuestionDetailFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 		userID := middleware.GetUserIDFromContext(r.Context())
 		
 		res, err := svc(r.Context(), id, userID)
 		if err != nil {
-			response.WriteJSON(w, http.StatusNotFound, "Question not found", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusNotFound, "Question not found")
 		}
-		response.WriteJSON(w, http.StatusOK, "Success", res)
-	}
+		
+		return http.StatusOK, res, nil
+	})
 }
 
 func HandleAddAnswer(svc service.AddAnswerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		if userID == "" {
-			response.WriteJSON(w, http.StatusUnauthorized, "Login required", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Login required")
 		}
 		
 		id := r.PathValue("id")
-		var req CreateAnswerReq
+		
+		var req domain.CreateAnswerReq
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid JSON", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid JSON")
 		}
 
 		res, err := svc(r.Context(), userID, id, req.Content)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusCreated, "Answer added", res)
-	}
+		
+		return http.StatusCreated, res, nil
+	})
 }
 
 func HandleToggleLike(svc service.ToggleLikeFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		if userID == "" {
-			response.WriteJSON(w, http.StatusUnauthorized, "Login required", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Login required")
 		}
 		id := r.PathValue("id")
 		
 		isLiked, count, err := svc(r.Context(), userID, id)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 		
-		response.WriteJSON(w, http.StatusOK, "Success", map[string]interface{}{
-			"is_liked": isLiked,
+		return http.StatusOK, map[string]interface{}{
+			"is_liked":    isLiked,
 			"likes_count": count,
-		})
-	}
+		}, nil
+	})
 }
 
 func HandleToggleFav(svc service.ToggleFavFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		if userID == "" {
-			response.WriteJSON(w, http.StatusUnauthorized, "Login required", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Login required")
 		}
 		id := r.PathValue("id")
 		
 		isFav, err := svc(r.Context(), userID, id)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 		
-		response.WriteJSON(w, http.StatusOK, "Success", map[string]interface{}{
+		return http.StatusOK, map[string]interface{}{
 			"is_favorited": isFav,
-		})
-	}
+		}, nil
+	})
 }

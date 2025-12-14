@@ -30,10 +30,6 @@ func Logging(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func HandleError(message string) {
-	color.Red("[ERROR] %s", message)
-}
-
 func HandleLog(message string) {
 	color.Blue(message)
 }

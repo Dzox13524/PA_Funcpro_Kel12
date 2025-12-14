@@ -11,137 +11,134 @@ import (
 )
 
 func HandleCreateProduct(createService service.CreateProductServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		if userID == "" {
-			response.WriteJSON(w, http.StatusUnauthorized, "Unauthorized", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
 		}
 
 		var req domain.CreateProductRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid JSON", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid JSON")
 		}
+		
 		product, err := createService(r.Context(), userID, req)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 
-		response.WriteJSON(w, http.StatusCreated, "product created", product)
-	}
+		return http.StatusCreated, product, nil
+	})
 }
 
 func HandleGetAllProducts(getAllService service.GetAllProductsServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		products, err := getAllService(r.Context())
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "success", products)
-	}
+		return http.StatusOK, products, nil
+	})
 }
 
 func HandleGetProductByID(getByIDService service.GetProductByIDServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 		product, err := getByIDService(r.Context(), id)
 		if err != nil {
-			response.WriteJSON(w, http.StatusNotFound, "product not found", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusNotFound, "product not found")
 		}
-		response.WriteJSON(w, http.StatusOK, "success", product)
-	}
+		return http.StatusOK, product, nil
+	})
 }
 
 func HandleUpdateProduct(updateService service.UpdateProductServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		id := r.PathValue("id")
 
 		var req domain.UpdateProductRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid JSON", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid JSON")
 		}
 
 		product, err := updateService(r.Context(), id, req, userID)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "product updated", product)
-	}
+		
+		return http.StatusOK, product, nil
+	})
 }
 
 func HandleDeleteProduct(deleteService service.DeleteProductServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		id := r.PathValue("id")
 
 		if err := deleteService(r.Context(), id, userID); err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "product deleted", nil)
-	}
+		
+		return http.StatusOK, nil, nil
+	})
 }
 
 func HandleUploadProductImage(uploadService service.UploadProductImageFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
 		id := r.PathValue("id")
+		
 		if err := r.ParseMultipartForm(10 << 20); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "File terlalu besar", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "File terlalu besar")
 		}
+		
 		file, _, err := r.FormFile("image")
 		if err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Gagal membaca file gambar", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Gagal membaca file gambar")
 		}
 		defer file.Close()
+		
 		url, err := uploadService(r.Context(), id, userID, file)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "upload_success", map[string]string{"image_url": url})
-	}
+		
+		return http.StatusOK, map[string]string{"image_url": url}, nil
+	})
 }
+
 func HandleSearchProducts(searchService service.SearchProductsServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		query := r.URL.Query().Get("q")      
 		category := r.URL.Query().Get("category") 
 		location := r.URL.Query().Get("location")
+		
 		products, err := searchService(r.Context(), query, category, location)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "success", products)
-	}
+		
+		return http.StatusOK, products, nil
+	})
 }
+
 func HandleGetMetaCrops(getMetaCropsService service.GetMetaCropsServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		crops, err := getMetaCropsService(r.Context())	
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
+		crops, err := getMetaCropsService(r.Context())    
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
-		}	
-		response.WriteJSON(w, http.StatusOK, "success", crops)
-	}
+			return 0, nil, err
+		}   
+		return http.StatusOK, crops, nil
+	})
 }
 
 func HandleGetMetaRegions(getMetaRegionsService service.GetMetaRegionsServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		regions, err := getMetaRegionsService(r.Context())
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
-		}	
-		response.WriteJSON(w, http.StatusOK, "success", regions)
-	}
+			return 0, nil, err
+		}   
+		return http.StatusOK, regions, nil
+	})
 }

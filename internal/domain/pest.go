@@ -19,3 +19,10 @@ type PestVerification struct {
 	UserID       string    `gorm:"primaryKey;type:varchar(36)"` 
 	CreatedAt    time.Time `json:"created_at"`
 }
+
+type CreatePestRequest struct {
+	PestName    string `json:"pest_name"`
+	Description string `json:"description"`
+	City        string `json:"city"`
+	Severity    string `json:"severity"`
+}

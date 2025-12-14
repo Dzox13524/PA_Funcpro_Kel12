@@ -11,43 +11,42 @@ import (
 )
 
 func HandleCreateArticle(createService service.CreateArticleServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
+		
 		var req domain.CreateArticleRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid JSON", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid JSON")
 		}
 
 		article, err := createService(r.Context(), userID, req)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 
-		response.WriteJSON(w, http.StatusCreated, "article created", article)
-	}
+		return http.StatusCreated, article, nil
+	})
 }
 
 func HandleGetAllArticles(getAllService service.GetAllArticlesServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		articles, err := getAllService(r.Context())
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "success", articles)
-	}
+		
+		return http.StatusOK, articles, nil
+	})
 }
 
 func HandleGetArticleByID(getByIDService service.GetArticleByIDServiceFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 		article, err := getByIDService(r.Context(), id)
 		if err != nil {
-			response.WriteJSON(w, http.StatusNotFound, "article not found", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusNotFound, "article not found")
 		}
-		response.WriteJSON(w, http.StatusOK, "success", article)
-	}
+		
+		return http.StatusOK, article, nil
+	})
 }

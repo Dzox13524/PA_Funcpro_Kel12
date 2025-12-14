@@ -11,126 +11,129 @@ import (
 )
 
 func HandleCreateReservation(createSvc service.CreateReservationFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
+		if userID == "" {
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
+		}
 
 		var req domain.CreateOrderRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid Request Body", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid Request Body")
 		}
 
 		res, err := createSvc(r.Context(), userID, req)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 
-		response.WriteJSON(w, http.StatusCreated, "Reservasi berhasil dibuat", res)
-	}
+		return http.StatusCreated, res, nil
+	})
 }
 
 func HandleCreateOrder(createOrderSvc service.CreateOrderFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
+		if userID == "" {
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
+		}
 
 		var req domain.CreateOrderRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid Request Body", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid Request Body")
 		}
 
 		res, err := createOrderSvc(r.Context(), userID, req)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 
-		response.WriteJSON(w, http.StatusCreated, "Order berhasil dibuat", res)
-	}
+		return http.StatusCreated, res, nil
+	})
 }
 
 func HandleGetMyReservations(getSvc service.GetUserTransactionsFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
+		if userID == "" {
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
+		}
 
 		res, err := getSvc(r.Context(), userID)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 
-		response.WriteJSON(w, http.StatusOK, "List Reservasi Saya", res)
-	}
+		return http.StatusOK, res, nil
+	})
 }
 
 func HandleConfirmReservation(updateStatusSvc service.UpdateTransactionStatusFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 
 		if err := updateStatusSvc(r.Context(), id, domain.StatusConfirmed); err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "Reservasi dikonfirmasi", nil)
-	}
+		
+		return http.StatusOK, nil, nil
+	})
 }
 
 func HandleCancelReservation(updateStatusSvc service.UpdateTransactionStatusFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 
 		if err := updateStatusSvc(r.Context(), id, domain.StatusCancelled); err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "Reservasi dibatalkan", nil)
-	}
+		
+		return http.StatusOK, nil, nil
+	})
 }
 
 func HandleGetMyOrders(getSvc service.GetUserTransactionsFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
+		if userID == "" {
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
+		}
 
 		res, err := getSvc(r.Context(), userID)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 
-		response.WriteJSON(w, http.StatusOK, "List Pesanan Saya", res)
-	}
+		return http.StatusOK, res, nil
+	})
 }
 
 func HandleGetTransactionDetail(getDetailSvc service.GetTransactionDetailFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 
 		res, err := getDetailSvc(r.Context(), id)
 		if err != nil {
-			response.WriteJSON(w, http.StatusNotFound, "Transaksi tidak ditemukan", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusNotFound, "Transaksi tidak ditemukan")
 		}
 
-		response.WriteJSON(w, http.StatusOK, "Detail Transaksi", res)
-	}
+		return http.StatusOK, res, nil
+	})
 }
 
 func HandleUpdateOrderStatus(updateStatusSvc service.UpdateTransactionStatusFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 
 		var req domain.UpdateStatusRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid JSON", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid JSON")
 		}
 
 		if err := updateStatusSvc(r.Context(), id, req.Status); err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
 
-		response.WriteJSON(w, http.StatusOK, "Status pesanan diperbarui", nil)
-	}
+		return http.StatusOK, nil, nil
+	})
 }

@@ -2,6 +2,7 @@ package domain
 
 import (
 	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -59,3 +60,14 @@ type Favorite struct {
 	QuestionID string `gorm:"primaryKey"`
 	CreatedAt  time.Time
 }
+
+type CreateQuestionReq struct {
+	Title    string `json:"title"`
+	Content  string `json:"content"`
+	Category string `json:"category"`
+}
+
+type CreateAnswerReq struct {
+	Content string `json:"content"`
+}
+

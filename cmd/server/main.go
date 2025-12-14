@@ -144,6 +144,6 @@ func main() {
 	finalHandler = middleware.Logging(finalHandler)
 	finalHandler = middleware.CORSMiddleware(finalHandler)
 
-	log.Println("Server running at http://localhost:8080")
+	middleware.HandleLog("Server running at http://localhost:8080")
 	http.ListenAndServe(":8080", finalHandler)
 }

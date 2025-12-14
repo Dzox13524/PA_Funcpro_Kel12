@@ -3,75 +3,71 @@ package handle
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/domain"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/middleware"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/response"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/service"
 )
 
-type CreatePestRequest struct {
-	PestName    string `json:"pest_name"`
-	Description string `json:"description"`
-	City        string `json:"city"`
-	Severity    string `json:"severity"`
-}
-
 func HandleCreateAlert(svc service.PestService) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		userID := middleware.GetUserIDFromContext(r.Context())
-		var req CreatePestRequest
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			response.WriteJSON(w, http.StatusBadRequest, "Invalid JSON", nil)
-			return
+		if userID == "" {
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
 		}
+
+		var req domain.CreatePestRequest
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			return 0, nil, response.NewAPIError(http.StatusBadRequest, "Invalid JSON")
+		}
+
 		res, err := svc.CreateReport(r.Context(), userID, req.PestName, req.Description, req.City, req.Severity)
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusCreated, "Laporan Berhasil Dibuat", res)
-	}
+
+		return http.StatusCreated, res, nil
+	})
 }
 
 func HandleGetMapData(svc service.PestService) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		res, err := svc.GetAllReports(r.Context())
 		if err != nil {
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "Data Peta Hama", res)
-	}
+		return http.StatusOK, res, nil
+	})
 }
 
 func HandleGetAlertDetail(svc service.PestService) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 		res, err := svc.GetReportDetail(r.Context(), id)
 		if err != nil {
-			response.WriteJSON(w, http.StatusNotFound, "Laporan tidak ditemukan", nil)
-			return
+			return 0, nil, response.NewAPIError(http.StatusNotFound, "Laporan tidak ditemukan")
 		}
-		response.WriteJSON(w, http.StatusOK, "Detail Laporan", res)
-	}
+		return http.StatusOK, res, nil
+	})
 }
 
 func HandleVerifyAlert(svc service.PestService) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return middleware.MakeHandler(func(r *http.Request) (int, any, error) {
 		id := r.PathValue("id")
 		userID := middleware.GetUserIDFromContext(r.Context())
-		if userID == ""{
-			response.WriteJSON(w, http.StatusUnauthorized, "Unauthorized", nil)
-			return 
+		
+		if userID == "" {
+			return 0, nil, response.NewAPIError(http.StatusUnauthorized, "Unauthorized")
 		}
 		
 		if err := svc.VerifyReport(r.Context(), id, userID); err != nil {
 			if err.Error() == "User sudah verifikasi laporan ini" {
-				response.WriteJSON(w, http.StatusConflict, "Anda sudah memvalidasi laporan ini", nil)
-				return 
+				return 0, nil, response.NewAPIError(http.StatusConflict, "Anda sudah memvalidasi laporan ini")
 			}
-			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
-			return
+			return 0, nil, err
 		}
-		response.WriteJSON(w, http.StatusOK, "Laporan berhasil diverifikasi", nil)
-	}
+		
+		return http.StatusOK, nil, nil
+	})
 }
