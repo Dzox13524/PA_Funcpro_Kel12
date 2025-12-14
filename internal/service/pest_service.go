@@ -11,7 +11,7 @@ type PestService interface {
 	CreateReport(ctx context.Context, userID, pestName, desc, city, severity string) (*domain.PestReport, error)
 	GetAllReports(ctx context.Context) ([]domain.PestReport, error)
 	GetReportDetail(ctx context.Context, id string) (*domain.PestReport, error)
-	VerifyReport(ctx context.Context, id string) error
+	VerifyReport(ctx context.Context, id string, userID string) error
 }
 
 type pestService struct {
@@ -46,6 +46,6 @@ func (s *pestService) GetReportDetail(ctx context.Context, id string) (*domain.P
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *pestService) VerifyReport(ctx context.Context, id string) error {
-	return s.repo.IncrementVerification(ctx, id)
+func (s *pestService) VerifyReport(ctx context.Context, id string, userID string) error {
+	return s.repo.VerifyReport(ctx, id, userID)
 }

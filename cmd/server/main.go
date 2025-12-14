@@ -25,6 +25,7 @@ func main() {
 		&domain.Favorite{},
 		&domain.PestReport{},
 		&domain.MarketTransaction{},
+		&domain.PestVerification{},
 	)
 
 	userRepoGetByID := repository.NewGetUserByIDRepository(db)

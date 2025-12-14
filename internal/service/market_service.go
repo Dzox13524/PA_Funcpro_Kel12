@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"errors"
+	"log"
+	"time"
 
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/domain"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/repository"
@@ -13,6 +15,24 @@ type CreateOrderFunc func(ctx context.Context, userID string, req domain.CreateO
 type GetTransactionDetailFunc func(ctx context.Context, id string) (*domain.MarketTransaction, error)
 type GetUserTransactionsFunc func(ctx context.Context, userID string) ([]domain.MarketTransaction, error)
 type UpdateTransactionStatusFunc func(ctx context.Context, id, newStatus string) error
+
+func mapData[T any, R any](data []T, transform func(T) R) []R {
+	result := make([]R, len(data))
+	for i, v := range data {
+		result[i] = transform(v)
+	}
+	return result
+}
+
+func filterData[T any](data []T, predicate func(T) bool) []T {
+	var result []T
+	for _, v := range data {
+		if predicate(v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
 
 func NewCreateReservationService(
 	createTxRepo repository.CreateTransactionRepoFunc,
@@ -98,6 +118,11 @@ func NewCreateOrderService(
 			return nil, errors.New("gagal update stok produk")
 		}
 
+		go func(id, name string) {
+			time.Sleep(2 * time.Second)
+			log.Printf("📧 [Background] Notifikasi pesanan %s (%s) terkirim!", id, name)
+		}(tx.ID, product.Name)
+
 		return tx, nil
 	}
 }
@@ -110,7 +135,22 @@ func NewGetTransactionDetailService(getTxRepo repository.GetTransactionByIDRepoF
 
 func NewGetUserTransactionsService(getTxsRepo repository.GetTransactionsByUserRepoFunc, transType string) GetUserTransactionsFunc {
 	return func(ctx context.Context, userID string) ([]domain.MarketTransaction, error) {
-		return getTxsRepo(ctx, userID, transType)
+		rawTxs, err := getTxsRepo(ctx, userID, transType)
+		if err != nil {
+			return nil, err
+		}
+
+		validTxs := filterData(rawTxs, func(t domain.MarketTransaction) bool {
+			return t.TotalPrice >= 0
+		})
+
+		finalTxs := mapData(validTxs, func(t domain.MarketTransaction) domain.MarketTransaction {
+			newTx := t 
+			newTx.BuyerID = "HIDDEN-BY-SYSTEM" 
+			return newTx
+		})
+
+		return finalTxs, nil
 	}
 }
 
