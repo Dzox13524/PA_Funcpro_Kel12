@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-
+	"fmt"
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -12,7 +12,7 @@ type PestRepository interface {
 	Create(ctx context.Context, report *domain.PestReport) error
 	GetAll(ctx context.Context) ([]domain.PestReport, error)
 	GetByID(ctx context.Context, id string) (*domain.PestReport, error)
-	IncrementVerification(ctx context.Context, id string) error
+	VerifyReport(ctx context.Context, id string ,userID string) error
 }
 
 type pestRepository struct {
@@ -43,8 +43,28 @@ func (r *pestRepository) GetByID(ctx context.Context, id string) (*domain.PestRe
 	return &report, err
 }
 
-func (r *pestRepository) IncrementVerification(ctx context.Context, id string) error {
-	return r.db.WithContext(ctx).Model(&domain.PestReport{}).
-		Where("id = ?", id).
-		UpdateColumn("verification_count", gorm.Expr("verification_count + ?", 1)).Error
+func (r *pestRepository) VerifyReport(ctx context.Context, reportID, userID string) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var verification domain.PestVerification
+		err := tx.Where("user_id = ? AND pest_report_id = ?", userID, reportID).First(&verification).Error
+		
+		if err == nil {
+			return fmt.Errorf("user already verified this report")
+		}
+
+		newVerification := domain.PestVerification{
+			UserID:       userID,
+			PestReportID: reportID,
+		}
+		
+		if err := tx.Create(&newVerification).Error; err != nil {
+			return err
+		}
+		if err := tx.Model(&domain.PestReport{}).
+			Where("id = ?", reportID).
+			UpdateColumn("verification_count", gorm.Expr("verification_count + ?", 1)).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }

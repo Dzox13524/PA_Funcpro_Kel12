@@ -14,3 +14,8 @@ type PestReport struct{
 	VerificationCount int				`json:"verification_count" gorm:"default:0"`
 }
 
+type PestVerification struct {
+	PestReportID string    `gorm:"primaryKey;type:varchar(36)"`
+	UserID       string    `gorm:"primaryKey;type:varchar(36)"` 
+	CreatedAt    time.Time `json:"created_at"`
+}

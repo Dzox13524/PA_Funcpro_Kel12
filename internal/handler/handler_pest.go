@@ -58,7 +58,17 @@ func HandleGetAlertDetail(svc service.PestService) http.HandlerFunc {
 func HandleVerifyAlert(svc service.PestService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
-		if err := svc.VerifyReport(r.Context(), id); err != nil {
+		userID := middleware.GetUserIDFromContext(r.Context())
+		if userID == ""{
+			response.WriteJSON(w, http.StatusUnauthorized, "Unauthorized", nil)
+			return 
+		}
+		
+		if err := svc.VerifyReport(r.Context(), id, userID); err != nil {
+			if err.Error() == "User sudah verifikasi laporan ini" {
+				response.WriteJSON(w, http.StatusConflict, "Anda sudah memvalidasi laporan ini", nil)
+				return 
+			}
 			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
 			return
 		}
