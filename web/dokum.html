@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,7 @@
             --error: #f44336;
             --warning: #ff9800;
             --border: #333;
-            
+
             --method-get: #61affe;
             --method-post: #49cc90;
             --method-put: #fca130;
@@ -79,7 +80,10 @@
             border-top: 1px solid #333;
             padding-top: 15px;
         }
-        .nav-header:first-of-type { border-top: none; }
+
+        .nav-header:first-of-type {
+            border-top: none;
+        }
 
         .nav-item {
             display: block;
@@ -92,7 +96,11 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .nav-item:hover { background: #333; color: var(--primary); }
+
+        .nav-item:hover {
+            background: #333;
+            color: var(--primary);
+        }
 
         .status-badge {
             padding: 5px 10px;
@@ -101,8 +109,18 @@
             text-align: center;
             font-weight: bold;
         }
-        .status-ok { background: rgba(0, 230, 118, 0.1); color: var(--success); border: 1px solid var(--success); }
-        .status-no { background: rgba(244, 67, 54, 0.1); color: var(--error); border: 1px solid var(--error); }
+
+        .status-ok {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status-no {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
 
         main {
             padding: 30px;
@@ -110,7 +128,10 @@
             scroll-behavior: smooth;
         }
 
-        h1 { margin-top: 0; color: var(--primary); }
+        h1 {
+            margin-top: 0;
+            color: var(--primary);
+        }
 
         .section-title {
             border-bottom: 2px solid var(--border);
@@ -120,21 +141,35 @@
             color: #fff;
             font-size: 1.5rem;
         }
-        
+
         .api-card {
             background: var(--bg-card);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 25px;
             border-left: 5px solid #555;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
-        .api-card.get { border-left-color: var(--method-get); }
-        .api-card.post { border-left-color: var(--method-post); }
-        .api-card.put { border-left-color: var(--method-put); }
-        .api-card.patch { border-left-color: var(--method-patch); }
-        .api-card.delete { border-left-color: var(--method-delete); }
+        .api-card.get {
+            border-left-color: var(--method-get);
+        }
+
+        .api-card.post {
+            border-left-color: var(--method-post);
+        }
+
+        .api-card.put {
+            border-left-color: var(--method-put);
+        }
+
+        .api-card.patch {
+            border-left-color: var(--method-patch);
+        }
+
+        .api-card.delete {
+            border-left-color: var(--method-delete);
+        }
 
         .endpoint-header {
             display: flex;
@@ -151,11 +186,27 @@
             font-size: 0.85rem;
             color: #000;
         }
-        .get .method-badge { background: var(--method-get); }
-        .post .method-badge { background: var(--method-post); }
-        .put .method-badge { background: var(--method-put); }
-        .patch .method-badge { background: var(--method-patch); }
-        .delete .method-badge { background: var(--method-delete); color: #fff; }
+
+        .get .method-badge {
+            background: var(--method-get);
+        }
+
+        .post .method-badge {
+            background: var(--method-post);
+        }
+
+        .put .method-badge {
+            background: var(--method-put);
+        }
+
+        .patch .method-badge {
+            background: var(--method-patch);
+        }
+
+        .delete .method-badge {
+            background: var(--method-delete);
+            color: #fff;
+        }
 
         .url {
             font-family: 'Consolas', monospace;
@@ -163,10 +214,15 @@
             color: var(--text-main);
             word-break: break-all;
         }
-        .id-param { color: var(--warning); }
 
-        .input-group { margin-bottom: 15px; }
-        
+        .id-param {
+            color: var(--warning);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
         label {
             display: block;
             margin-bottom: 5px;
@@ -174,7 +230,10 @@
             color: var(--text-muted);
         }
 
-        input[type="text"], textarea, select, input[type="file"] {
+        input[type="text"],
+        textarea,
+        select,
+        input[type="file"] {
             width: 100%;
             background: var(--bg-input);
             border: 1px solid var(--border);
@@ -184,9 +243,17 @@
             font-family: 'Consolas', monospace;
             box-sizing: border-box;
         }
-        
-        input:focus, textarea:focus { border-color: var(--primary); outline: none; }
-        textarea { height: 100px; resize: vertical; }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
 
         button {
             background: var(--primary);
@@ -199,8 +266,16 @@
             font-size: 0.9rem;
             transition: 0.2s;
         }
-        button:hover { opacity: 0.9; transform: translateY(-1px); }
-        button.secondary { background-color: #444; color: #fff; }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        button.secondary {
+            background-color: #444;
+            color: #fff;
+        }
 
         .response-box {
             background: #000;
@@ -215,8 +290,16 @@
             max-height: 400px;
             overflow-y: auto;
         }
-        .response-box.success { border-color: var(--success); color: #a5d6a7; }
-        .response-box.error { border-color: var(--error); color: #ef9a9a; }
+
+        .response-box.success {
+            border-color: var(--success);
+            color: #a5d6a7;
+        }
+
+        .response-box.error {
+            border-color: var(--error);
+            color: #ef9a9a;
+        }
 
         .preview-img {
             max-width: 200px;
@@ -232,19 +315,21 @@
 
     <aside>
         <h2 style="color:white; margin:0;">🌱 Agro API</h2>
-        
+
         <div class="auth-box">
             <h4 style="margin:0 0 10px 0; color:var(--text-muted);">🔑 Auth Status</h4>
             <div id="auth-status-container"></div>
-            
+
             <label style="margin-top:10px;">Token (JWT):</label>
             <div id="token-display" class="token-display"></div>
-            
-            <input type="text" id="manual-token" placeholder="Paste Token disini..." style="margin-top:5px; font-size:0.8rem; height: 35px;">
-            
+
+            <input type="text" id="manual-token" placeholder="Paste Token disini..."
+                style="margin-top:5px; font-size:0.8rem; height: 35px;">
+
             <div style="display: flex; gap: 5px; margin-top: 10px;">
                 <button type="button" onclick="saveTokenManual()" style="flex:1; font-size: 0.8rem;">Set Token</button>
-                <button type="button" onclick="logout()" class="secondary" style="flex:1; background:var(--error); font-size: 0.8rem;">Clear</button>
+                <button type="button" onclick="logout()" class="secondary"
+                    style="flex:1; background:var(--error); font-size: 0.8rem;">Clear</button>
             </div>
         </div>
 
@@ -275,6 +360,11 @@
             <a href="#list-res" class="nav-item">List Reservasi Saya</a>
             <a href="#list-orders" class="nav-item">List Order Saya</a>
             <a href="#trans-actions" class="nav-item">Manage Status</a>
+
+            <div class="nav-header">6. Articles</div>
+            <a href="#create-article" class="nav-item">Create Article</a>
+            <a href="#list-articles" class="nav-item">List Articles</a>
+            <a href="#detail-article" class="nav-item">Detail Article</a>
         </nav>
     </aside>
 
@@ -297,7 +387,8 @@
   "password": "password123"
 }</textarea>
             </div>
-            <button type="button" onclick="sendRequest('register', 'POST', '/api/v1/auth/register', false, event)">Register</button>
+            <button type="button"
+                onclick="sendRequest('register', 'POST', '/api/v1/auth/register', false, event)">Register</button>
             <div id="res-register" class="response-box"></div>
         </div>
 
@@ -314,7 +405,8 @@
   "password": "password123"
 }</textarea>
             </div>
-            <button type="button" onclick="sendRequest('login', 'POST', '/api/v1/auth/login', false, event)">Login</button>
+            <button type="button"
+                onclick="sendRequest('login', 'POST', '/api/v1/auth/login', false, event)">Login</button>
             <div id="res-login" class="response-box"></div>
         </div>
 
@@ -324,7 +416,8 @@
                 <span class="url">/api/v1/users/me</span>
             </div>
             <p>Melihat profil user yang sedang login (Butuh Token).</p>
-            <button type="button" onclick="sendRequest('get-me', 'GET', '/api/v1/users/me', true, event)">Get My Profile</button>
+            <button type="button" onclick="sendRequest('get-me', 'GET', '/api/v1/users/me', true, event)">Get My
+                Profile</button>
             <div id="res-get-me" class="response-box"></div>
         </div>
 
@@ -340,7 +433,8 @@
   "name": "Nama Baru Bos"
 }</textarea>
             </div>
-            <button type="button" onclick="sendRequest('update-me', 'PATCH', '/api/v1/users/me', true, event)">Update Profile</button>
+            <button type="button" onclick="sendRequest('update-me', 'PATCH', '/api/v1/users/me', true, event)">Update
+                Profile</button>
             <div id="res-update-me" class="response-box"></div>
         </div>
 
@@ -361,7 +455,9 @@
   "stock": 100
 }</textarea>
             </div>
-            <button type="button" onclick="sendRequest('create-prod', 'POST', '/api/v1/market/products', true, event)">Create Product</button>
+            <button type="button"
+                onclick="sendRequest('create-prod', 'POST', '/api/v1/market/products', true, event)">Create
+                Product</button>
             <div id="res-create-prod" class="response-box"></div>
         </div>
 
@@ -381,7 +477,7 @@
                 <label>Pilih File Gambar</label>
                 <input type="file" id="upload-file-input" accept="image/*">
             </div>
-            
+
             <button type="button" onclick="uploadImage(event)">Upload ke Cloudinary</button>
 
             <div id="res-upload" class="response-box"></div>
@@ -398,7 +494,9 @@
                 <label>Product ID</label>
                 <input type="text" id="id-detail-prod" placeholder="Product ID...">
             </div>
-            <button type="button" onclick="sendRequestWithID('detail-prod', 'GET', '/api/v1/market/products/{id}', false, event)">Get Detail</button>
+            <button type="button"
+                onclick="sendRequestWithID('detail-prod', 'GET', '/api/v1/market/products/{id}', false, event)">Get
+                Detail</button>
             <div id="res-detail-prod" class="response-box"></div>
         </div>
 
@@ -418,7 +516,8 @@
   "category": "Penyakit"
 }</textarea>
             </div>
-            <button type="button" onclick="sendRequest('create-q', 'POST', '/api/v1/questions', true, event)">Post Question</button>
+            <button type="button" onclick="sendRequest('create-q', 'POST', '/api/v1/questions', true, event)">Post
+                Question</button>
             <div id="res-create-q" class="response-box"></div>
         </div>
 
@@ -432,7 +531,9 @@
                 <label>Question ID</label>
                 <input type="text" id="id-detail-q" placeholder="Question UUID...">
             </div>
-            <button type="button" onclick="sendRequestWithID('detail-q', 'GET', '/api/v1/questions/{id}', true, event)">Get Detail</button>
+            <button type="button"
+                onclick="sendRequestWithID('detail-q', 'GET', '/api/v1/questions/{id}', true, event)">Get
+                Detail</button>
             <div id="res-detail-q" class="response-box"></div>
         </div>
 
@@ -452,7 +553,9 @@
   "content": "Coba cek pangkal batangnya, mungkin ada wereng."
 }</textarea>
             </div>
-            <button type="button" onclick="sendRequestWithID('answer-q', 'POST', '/api/v1/questions/{id}/answers', true, event)">Submit Answer</button>
+            <button type="button"
+                onclick="sendRequestWithID('answer-q', 'POST', '/api/v1/questions/{id}/answers', true, event)">Submit
+                Answer</button>
             <div id="res-answer-q" class="response-box"></div>
         </div>
 
@@ -466,7 +569,9 @@
                 <label>Question ID</label>
                 <input type="text" id="id-like-q" placeholder="Question UUID...">
             </div>
-            <button type="button" onclick="sendRequestWithID('like-q', 'POST', '/api/v1/questions/{id}/like', true, event)">Toggle Like</button>
+            <button type="button"
+                onclick="sendRequestWithID('like-q', 'POST', '/api/v1/questions/{id}/like', true, event)">Toggle
+                Like</button>
             <div id="res-like-q" class="response-box"></div>
         </div>
 
@@ -487,7 +592,8 @@
   "severity": "high"
 }</textarea>
             </div>
-            <button type="button" onclick="sendRequest('create-alert', 'POST', '/api/v1/alerts', true, event)">Lapor Hama</button>
+            <button type="button" onclick="sendRequest('create-alert', 'POST', '/api/v1/alerts', true, event)">Lapor
+                Hama</button>
             <div id="res-create-alert" class="response-box"></div>
         </div>
 
@@ -497,7 +603,8 @@
                 <span class="url">/api/v1/alerts/map</span>
             </div>
             <p>Mengambil semua data laporan hama.</p>
-            <button type="button" onclick="sendRequest('map-alert', 'GET', '/api/v1/alerts/map', false, event)">Get All Alerts</button>
+            <button type="button" onclick="sendRequest('map-alert', 'GET', '/api/v1/alerts/map', false, event)">Get All
+                Alerts</button>
             <div id="res-map-alert" class="response-box"></div>
         </div>
 
@@ -511,7 +618,9 @@
                 <label>Alert ID</label>
                 <input type="text" id="id-detail-alert" placeholder="Alert UUID...">
             </div>
-            <button type="button" onclick="sendRequestWithID('detail-alert', 'GET', '/api/v1/alerts/{id}', false, event)">Get Detail Alert</button>
+            <button type="button"
+                onclick="sendRequestWithID('detail-alert', 'GET', '/api/v1/alerts/{id}', false, event)">Get Detail
+                Alert</button>
             <div id="res-detail-alert" class="response-box"></div>
         </div>
 
@@ -525,7 +634,8 @@
                 <label>Alert ID</label>
                 <input type="text" id="id-verify-alert" placeholder="Alert UUID...">
             </div>
-            <button type="button" onclick="sendRequestWithID('verify-alert', 'POST', '/api/v1/alerts/{id}/verify', true, event)">Verifikasi</button>
+            <button type="button"
+                onclick="sendRequestWithID('verify-alert', 'POST', '/api/v1/alerts/{id}/verify', true, event)">Verifikasi</button>
             <div id="res-verify-alert" class="response-box"></div>
         </div>
 
@@ -581,7 +691,9 @@
                 <span class="url">/api/v1/users/me/reservations</span>
             </div>
             <p>Melihat daftar Reservasi (Pre-Order) saya.</p>
-            <button type="button" onclick="sendRequest('list-res', 'GET', '/api/v1/users/me/reservations', true, event)">List My Reservations</button>
+            <button type="button"
+                onclick="sendRequest('list-res', 'GET', '/api/v1/users/me/reservations', true, event)">List My
+                Reservations</button>
             <div id="res-list-res" class="response-box"></div>
         </div>
 
@@ -591,7 +703,9 @@
                 <span class="url">/api/v1/users/me/orders</span>
             </div>
             <p>Melihat daftar Order (Pesanan Biasa) saya.</p>
-            <button type="button" onclick="sendRequest('list-orders', 'GET', '/api/v1/users/me/orders', true, event)">List My Orders</button>
+            <button type="button"
+                onclick="sendRequest('list-orders', 'GET', '/api/v1/users/me/orders', true, event)">List My
+                Orders</button>
             <div id="res-list-orders" class="response-box"></div>
         </div>
 
@@ -605,12 +719,14 @@
                 <label>Transaction ID</label>
                 <input type="text" id="id-detail-trans" placeholder="Transaction UUID...">
             </div>
-            <button type="button" onclick="sendRequestWithID('detail-trans', 'GET', '/api/v1/market/orders/{id}', true, event)">Get Detail Transaction</button>
+            <button type="button"
+                onclick="sendRequestWithID('detail-trans', 'GET', '/api/v1/market/orders/{id}', true, event)">Get Detail
+                Transaction</button>
             <div id="res-detail-trans" class="response-box"></div>
         </div>
 
         <div id="trans-actions"></div>
-        
+
         <div class="api-card post" id="confirm-res">
             <div class="endpoint-header">
                 <span class="method-badge">POST</span>
@@ -621,7 +737,9 @@
                 <label>Transaction ID</label>
                 <input type="text" id="id-confirm-res" placeholder="Transaction UUID...">
             </div>
-            <button type="button" onclick="sendRequestWithID('confirm-res', 'POST', '/api/v1/market/reservations/{id}/confirm', true, event)">Confirm Reservation</button>
+            <button type="button"
+                onclick="sendRequestWithID('confirm-res', 'POST', '/api/v1/market/reservations/{id}/confirm', true, event)">Confirm
+                Reservation</button>
             <div id="res-confirm-res" class="response-box"></div>
         </div>
 
@@ -635,7 +753,9 @@
                 <label>Transaction ID</label>
                 <input type="text" id="id-cancel-res" placeholder="Transaction UUID...">
             </div>
-            <button type="button" onclick="sendRequestWithID('cancel-res', 'POST', '/api/v1/market/reservations/{id}/cancel', true, event)">Cancel Reservation</button>
+            <button type="button"
+                onclick="sendRequestWithID('cancel-res', 'POST', '/api/v1/market/reservations/{id}/cancel', true, event)">Cancel
+                Reservation</button>
             <div id="res-cancel-res" class="response-box"></div>
         </div>
 
@@ -655,7 +775,9 @@
   "status": "shipped"
 }</textarea>
             </div>
-            <button type="button" onclick="sendRequestWithID('update-res-status', 'PATCH', '/api/v1/market/reservations/{id}/status', true, event)">Update Status Reservasi</button>
+            <button type="button"
+                onclick="sendRequestWithID('update-res-status', 'PATCH', '/api/v1/market/reservations/{id}/status', true, event)">Update
+                Status Reservasi</button>
             <div id="res-update-res-status" class="response-box"></div>
         </div>
 
@@ -675,10 +797,58 @@
   "status": "shipped"
 }</textarea>
             </div>
-            <button type="button" onclick="sendRequestWithID('update-order-status', 'PATCH', '/api/v1/market/orders/{id}/status', true, event)">Update Status Order</button>
+            <button type="button"
+                onclick="sendRequestWithID('update-order-status', 'PATCH', '/api/v1/market/orders/{id}/status', true, event)">Update
+                Status Order</button>
             <div id="res-update-order-status" class="response-box"></div>
         </div>
 
+        <h2 class="section-title">6. Articles (Blog/Berita)</h2>
+
+        <div class="api-card post" id="create-article">
+            <div class="endpoint-header">
+                <span class="method-badge">POST</span>
+                <span class="url">/api/v1/articles</span>
+            </div>
+            <p>Membuat artikel baru (Butuh Login).</p>
+            <div class="input-group">
+                <label>Body (JSON)</label>
+                <textarea id="body-create-article">{
+  "title": "Tips Menanam Cabai",
+  "content": "Pertama, siapkan tanah yang gembur..."
+}</textarea>
+            </div>
+            <button type="button"
+                onclick="sendRequest('create-article', 'POST', '/api/v1/articles', true, event)">Create Article</button>
+            <div id="res-create-article" class="response-box"></div>
+        </div>
+
+        <div class="api-card get" id="list-articles">
+            <div class="endpoint-header">
+                <span class="method-badge">GET</span>
+                <span class="url">/api/v1/articles</span>
+            </div>
+            <p>Melihat semua daftar artikel.</p>
+            <button type="button" onclick="sendRequest('list-articles', 'GET', '/api/v1/articles', false, event)">Get
+                All Articles</button>
+            <div id="res-list-articles" class="response-box"></div>
+        </div>
+
+        <div class="api-card get" id="detail-article">
+            <div class="endpoint-header">
+                <span class="method-badge">GET</span>
+                <span class="url">/api/v1/articles/<span class="id-param">{id}</span></span>
+            </div>
+            <p>Melihat detail artikel berdasarkan ID.</p>
+            <div class="input-group">
+                <label>Article ID</label>
+                <input type="text" id="id-detail-article" placeholder="Article UUID...">
+            </div>
+            <button type="button"
+                onclick="sendRequestWithID('detail-article', 'GET', '/api/v1/articles/{id}', false, event)">Get Detail
+                Article</button>
+            <div id="res-detail-article" class="response-box"></div>
+        </div>
     </main>
 
     <script>
@@ -726,9 +896,9 @@
                 event.preventDefault();
                 event.stopPropagation();
             }
-            
+
             const resBox = document.getElementById(`res-${elementId}`);
-            
+
             resBox.style.display = 'block';
             resBox.innerText = 'Loading...';
             resBox.className = 'response-box';
@@ -784,35 +954,43 @@
                     }
 
                     if (data.data && data.data.id) {
-                         const newId = data.data.id;
-                         
-                         if (elementId === 'create-alert') {
-                             if(document.getElementById('id-detail-alert')) document.getElementById('id-detail-alert').value = newId;
-                             if(document.getElementById('id-verify-alert')) document.getElementById('id-verify-alert').value = newId;
-                         }
-                         if (elementId === 'create-prod') {
-                            if(document.getElementById('upload-prod-id')) document.getElementById('upload-prod-id').value = newId;
-                            if(document.getElementById('id-detail-prod')) document.getElementById('id-detail-prod').value = newId;
-                            if(document.getElementById('res-prod-id')) document.getElementById('res-prod-id').value = newId;
-                            if(document.getElementById('order-prod-id')) document.getElementById('order-prod-id').value = newId;
-                         }
-                         if (elementId === 'create-q') {
-                            if(document.getElementById('id-detail-q')) document.getElementById('id-detail-q').value = newId;
-                            if(document.getElementById('id-answer-q')) document.getElementById('id-answer-q').value = newId;
-                            if(document.getElementById('id-like-q')) document.getElementById('id-like-q').value = newId;
-                         }
-                         if (elementId === 'create-res') {
-                             if(document.getElementById('id-detail-trans')) document.getElementById('id-detail-trans').value = newId;
-                             if(document.getElementById('id-confirm-res')) document.getElementById('id-confirm-res').value = newId;
-                             if(document.getElementById('id-cancel-res')) document.getElementById('id-cancel-res').value = newId;
-                             if(document.getElementById('id-update-res')) document.getElementById('id-update-res').value = newId;
-                         }
-                         if (elementId === 'create-order') {
-                             if(document.getElementById('id-detail-trans')) document.getElementById('id-detail-trans').value = newId;
-                             if(document.getElementById('id-update-order')) document.getElementById('id-update-order').value = newId;
-                         }
+                        const newId = data.data.id;
 
-                         resBox.innerText += "\n\n[INFO] ID berhasil disalin otomatis ke form terkait!";
+                        if (elementId === 'create-alert') {
+                            if (document.getElementById('id-detail-alert')) document.getElementById('id-detail-alert').value = newId;
+                            if (document.getElementById('id-verify-alert')) document.getElementById('id-verify-alert').value = newId;
+                        }
+                        if (elementId === 'create-prod') {
+                            if (document.getElementById('upload-prod-id')) document.getElementById('upload-prod-id').value = newId;
+                            if (document.getElementById('id-detail-prod')) document.getElementById('id-detail-prod').value = newId;
+                            if (document.getElementById('res-prod-id')) document.getElementById('res-prod-id').value = newId;
+                            if (document.getElementById('order-prod-id')) document.getElementById('order-prod-id').value = newId;
+                        }
+                        if (elementId === 'create-q') {
+                            if (document.getElementById('id-detail-q')) document.getElementById('id-detail-q').value = newId;
+                            if (document.getElementById('id-answer-q')) document.getElementById('id-answer-q').value = newId;
+                            if (document.getElementById('id-like-q')) document.getElementById('id-like-q').value = newId;
+                        }
+                        if (elementId === 'create-res') {
+                            if (document.getElementById('id-detail-trans')) document.getElementById('id-detail-trans').value = newId;
+                            if (document.getElementById('id-confirm-res')) document.getElementById('id-confirm-res').value = newId;
+                            if (document.getElementById('id-cancel-res')) document.getElementById('id-cancel-res').value = newId;
+                            if (document.getElementById('id-update-res')) document.getElementById('id-update-res').value = newId;
+                        }
+                        if (elementId === 'create-order') {
+                            if (document.getElementById('id-detail-trans')) document.getElementById('id-detail-trans').value = newId;
+                            if (document.getElementById('id-update-order')) document.getElementById('id-update-order').value = newId;
+                        }
+
+                        /* ======================= LOGIKA AUTO-FILL ID ARTIKEL ======================= */
+                        if (elementId === 'create-article') {
+                            if (document.getElementById('id-detail-article')) {
+                                document.getElementById('id-detail-article').value = newId;
+                            }
+                        }
+                        /* =========================================================================== */
+
+                        resBox.innerText += "\n\n[INFO] ID berhasil disalin otomatis ke form terkait!";
                     }
                 } else {
                     resBox.classList.add('error');
@@ -822,7 +1000,7 @@
                 resBox.innerText = `Network Error: ${err.message}\n(Pastikan server Go jalan di ${BASE_URL})`;
                 resBox.classList.add('error');
             }
-            
+
             resBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
@@ -842,11 +1020,11 @@
                     obj.product_id = prodIdInput;
                     bodyJson = JSON.stringify(obj, null, 2);
                     bodyInput.value = bodyJson;
-                } catch(e) {
+                } catch (e) {
                     console.error("JSON Error parsing body for reservation");
                 }
             }
-            
+
             sendRequest('create-res', 'POST', '/api/v1/market/reservations', true, null);
         }
 
@@ -866,11 +1044,11 @@
                     obj.product_id = prodIdInput;
                     bodyJson = JSON.stringify(obj, null, 2);
                     bodyInput.value = bodyJson;
-                } catch(e) {
+                } catch (e) {
                     console.error("JSON Error parsing body for order");
                 }
             }
-            
+
             sendRequest('create-order', 'POST', '/api/v1/market/orders', true, null);
         }
 
@@ -879,16 +1057,16 @@
                 event.preventDefault();
                 event.stopPropagation();
             }
-            
+
             const idInput = document.getElementById(`id-${elementId}`);
             if (!idInput || !idInput.value.trim()) {
                 alert("Masukkan ID terlebih dahulu!");
                 return;
             }
             const realEndpoint = endpointTemplate.replace('{id}', idInput.value.trim());
-            
+
             const resBox = document.getElementById(`res-${elementId}`);
-            
+
             resBox.style.display = 'block';
             resBox.innerText = 'Loading...';
             resBox.className = 'response-box';
@@ -952,7 +1130,7 @@
                 event.preventDefault();
                 event.stopPropagation();
             }
-            
+
             const id = document.getElementById('upload-prod-id').value.trim();
             const fileInput = document.getElementById('upload-file-input');
             const resArea = document.getElementById('res-upload');
@@ -998,4 +1176,5 @@
         }
     </script>
 </body>
+
 </html>
