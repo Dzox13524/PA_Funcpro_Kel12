@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Dzox13524/PA_Funcpro_Kel12/internal/domain"
 	"github.com/google/uuid"
@@ -13,12 +14,26 @@ type GetTransactionByIDRepoFunc func(ctx context.Context, id string) (*domain.Ma
 type GetTransactionsByUserRepoFunc func(ctx context.Context, userID, transType string) ([]domain.MarketTransaction, error)
 type UpdateTransactionStatusRepoFunc func(ctx context.Context, id, status string) error
 
+func retryOperation(attempts int, operation func() error) error {
+	if attempts <= 0 {
+		return errors.New("max retry attempts reached")
+	}
+	err := operation()
+	if err == nil {
+		return nil
+	}
+	return retryOperation(attempts-1, operation)
+}
+
 func NewCreateTransactionRepository(db *gorm.DB) CreateTransactionRepoFunc {
 	return func(ctx context.Context, tx *domain.MarketTransaction) error {
 		if tx.ID == "" {
 			tx.ID = uuid.New().String()
 		}
-		return db.WithContext(ctx).Create(tx).Error
+		
+		return retryOperation(3, func() error {
+			return db.WithContext(ctx).Create(tx).Error
+		})
 	}
 }
 
