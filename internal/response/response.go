@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 )
-
 type APIresponse struct {
-	Status 	   string
-	Author     string
-	Data       interface{}
+	Status string      `json:"status"` 
+	Author string      `json:"author"` 
+	Data   interface{} `json:"data"`   
 }
 
 func WriteJSON(w http.ResponseWriter, statusCode int, status string, data interface{}) {

@@ -11,12 +11,14 @@ type Product struct {
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `json:"-" gorm:"index"`
-	SellerID    string         `json:"seller_id"` 
+	SellerID    string         `json:"seller_id"`
 	Name        string         `json:"name"`
 	Description string         `json:"description"`
 	Price       float64        `json:"price"`
-	Stock       int            `json:"stock"`     
+	Stock       int            `json:"stock"`
 	ImageURL    string         `json:"image_url"`
+	Category string `json:"category"`
+	Location string `json:"location"` 
 }
 
 type CreateProductRequest struct {
@@ -24,6 +26,8 @@ type CreateProductRequest struct {
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 	Stock       int     `json:"stock"`
+	Category    string  `json:"category"` 
+	Location    string  `json:"location"` 
 }
 
 type UpdateProductRequest struct {
@@ -31,4 +35,6 @@ type UpdateProductRequest struct {
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 	Stock       int     `json:"stock"`
+	Category    string  `json:"category"`
+	Location    string  `json:"location"`
 }

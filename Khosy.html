@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -156,7 +157,7 @@
             position: relative;
             overflow: hidden;
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%),
-                        url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(16,185,129,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+                url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(16,185,129,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
         }
 
         .hero-particles {
@@ -180,9 +181,19 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(100px, -100px) rotate(120deg); }
-            66% { transform: translate(-50px, 150px) rotate(240deg); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(100px, -100px) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-50px, 150px) rotate(240deg);
+            }
         }
 
         .hero-content {
@@ -257,6 +268,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -371,6 +383,7 @@
             transition: all 0.3s ease;
             border: 1px solid rgba(16, 185, 129, 0.1);
             cursor: pointer;
+            position: relative;
         }
 
         .product-card:hover {
@@ -410,8 +423,13 @@
         }
 
         @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
         }
 
         .product-info {
@@ -463,6 +481,28 @@
         .btn-small:hover {
             transform: translateX(5px);
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-edit {
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
         }
 
         .forum {
@@ -720,7 +760,8 @@
             font-size: 1.3rem;
         }
 
-        .footer-section p, .footer-section a {
+        .footer-section p,
+        .footer-section a {
             color: var(--text-muted);
             line-height: 2;
             text-decoration: none;
@@ -797,13 +838,25 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .modal-close {
@@ -874,7 +927,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .toast {
@@ -905,6 +960,7 @@
                 transform: translateX(400px);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -967,6 +1023,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar" id="navbar">
         <div class="nav-container">
@@ -994,7 +1051,8 @@
         <div class="hero-particles" id="particles"></div>
         <div class="hero-content">
             <h1>Revolusi Pertanian Digital Indonesia</h1>
-            <p>Platform terpadu untuk petani modern. Jual beli hasil panen, konsultasi ahli, dan monitoring hama dalam satu tempat.</p>
+            <p>Platform terpadu untuk petani modern. Jual beli hasil panen, konsultasi ahli, dan monitoring hama dalam
+                satu tempat.</p>
             <div class="hero-buttons">
                 <button class="btn btn-primary" onclick="openRegisterModal()">Mulai Sekarang</button>
                 <button class="btn btn-secondary" onclick="scrollToSection('features')">Pelajari Lebih Lanjut</button>
@@ -1002,7 +1060,7 @@
         </div>
     </section>
 
-<section class="features" id="features">
+    <section class="features" id="features">
         <div class="container">
             <div class="section-header">
                 <h2>Fitur Unggulan</h2>
@@ -1012,7 +1070,8 @@
                 <div class="feature-card">
                     <i class="fas fa-store feature-icon"></i>
                     <h3>Marketplace Terpercaya</h3>
-                    <p>Jual beli hasil panen dan sarana produksi pertanian dengan sistem Pre-Order yang aman dan transparan.</p>
+                    <p>Jual beli hasil panen dan sarana produksi pertanian dengan sistem Pre-Order yang aman dan
+                        transparan.</p>
                 </div>
                 <div class="feature-card">
                     <i class="fas fa-comments feature-icon"></i>
@@ -1049,6 +1108,28 @@
                 <h2>Marketplace Produk</h2>
                 <p>Temukan berbagai produk pertanian berkualitas</p>
             </div>
+
+            <div class="search-wrapper"
+                style="max-width: 1000px; margin: 0 auto 3rem; display: flex; gap: 10px; flex-wrap: wrap;">
+                <input type="text" id="searchInput" placeholder="Cari nama produk..." onkeyup="handleSearch()"
+                    style="flex: 2; min-width: 200px; padding: 1rem 1.5rem; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.2); background: var(--dark-light); color: var(--text);">
+
+                <select id="searchCrop" onchange="handleSearch()"
+                    style="flex: 1; min-width: 150px; padding: 0 1.5rem; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.2); background: var(--dark-light); color: var(--text);">
+                    <option value="">Semua Tanaman</option>
+                </select>
+
+                <select id="searchRegion" onchange="handleSearch()"
+                    style="flex: 1; min-width: 150px; padding: 0 1.5rem; border-radius: 50px; border: 1px solid rgba(16, 185, 129, 0.2); background: var(--dark-light); color: var(--text);">
+                    <option value="">Semua Wilayah</option>
+                </select>
+
+                <button onclick="handleSearch()"
+                    style="padding: 0 1.5rem; background: var(--primary); border: none; border-radius: 50px; color: white; cursor: pointer;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
             <div class="products-grid" id="productsContainer">
                 <div class="empty-state">
                     <div class="loading"></div>
@@ -1145,7 +1226,8 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Tentang AgroHub</h3>
-                <p>Platform digital terdepan untuk memberdayakan petani Indonesia dengan teknologi modern dan akses pasar yang lebih luas.</p>
+                <p>Platform digital terdepan untuk memberdayakan petani Indonesia dengan teknologi modern dan akses
+                    pasar yang lebih luas.</p>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
@@ -1179,7 +1261,6 @@
         </div>
     </footer>
 
-    <!-- Login Modal -->
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('loginModal')">&times;</span>
@@ -1195,13 +1276,13 @@
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginBtn">Masuk</button>
                 <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">
-                    Belum punya akun? <a href="#" onclick="closeModal('loginModal'); openRegisterModal();" style="color: var(--primary);">Daftar sekarang</a>
+                    Belum punya akun? <a href="#" onclick="closeModal('loginModal'); openRegisterModal();"
+                        style="color: var(--primary);">Daftar sekarang</a>
                 </p>
             </form>
         </div>
     </div>
 
-    <!-- Register Modal -->
     <div class="modal" id="registerModal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('registerModal')">&times;</span>
@@ -1221,13 +1302,13 @@
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;" id="registerBtn">Daftar</button>
                 <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">
-                    Sudah punya akun? <a href="#" onclick="closeModal('registerModal'); openLoginModal();" style="color: var(--primary);">Masuk</a>
+                    Sudah punya akun? <a href="#" onclick="closeModal('registerModal'); openLoginModal();"
+                        style="color: var(--primary);">Masuk</a>
                 </p>
             </form>
         </div>
     </div>
 
-    <!-- Create Product Modal -->
     <div class="modal" id="createProductModal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('createProductModal')">&times;</span>
@@ -1242,6 +1323,18 @@
                     <textarea id="productDescription" placeholder="Jelaskan detail produk Anda..." required></textarea>
                 </div>
                 <div class="form-group">
+                    <label>Jenis Tanaman</label>
+                    <select id="productCrop" required>
+                        <option value="">Pilih Jenis Tanaman</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Wilayah</label>
+                    <select id="productRegion" required>
+                        <option value="">Pilih Wilayah</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Harga (Rp)</label>
                     <input type="number" id="productPrice" placeholder="50000" required>
                 </div>
@@ -1253,12 +1346,45 @@
                     <label>Gambar Produk (Opsional)</label>
                     <input type="file" id="productImage" accept="image/*">
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;" id="createProductBtn">Tambah Produk</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="createProductBtnSubmit">Tambah
+                    Produk</button>
             </form>
         </div>
     </div>
 
-    <!-- Ask Question Modal -->
+    <div class="modal" id="editProductModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('editProductModal')">&times;</span>
+            <h2><i class="fas fa-edit"></i> Edit Produk</h2>
+            <form onsubmit="handleUpdateProduct(event)">
+                <input type="hidden" id="editProductId">
+                <div class="form-group"><label>Nama Produk</label><input type="text" id="editProductName" required>
+                </div>
+                <div class="form-group"><label>Deskripsi</label><textarea id="editProductDescription"
+                        required></textarea></div>
+                <div class="form-group"><label>Jenis Tanaman</label><select id="editProductCrop" required>
+                        <option value="">Pilih Jenis Tanaman</option>
+                    </select></div>
+                <div class="form-group"><label>Wilayah</label><select id="editProductRegion" required>
+                        <option value="">Pilih Wilayah</option>
+                    </select></div>
+                <div class="form-group"><label>Harga (Rp)</label><input type="number" id="editProductPrice" required>
+                </div>
+                <div class="form-group"><label>Stok</label><input type="number" id="editProductStock" required></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="productDetailModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('productDetailModal')">&times;</span>
+            <div id="productDetailContent">
+                <div class="loading"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="askModal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('askModal')">&times;</span>
@@ -1282,14 +1408,15 @@
                 </div>
                 <div class="form-group">
                     <label>Detail Pertanyaan</label>
-                    <textarea id="questionContent" placeholder="Jelaskan masalah Anda secara detail..." required></textarea>
+                    <textarea id="questionContent" placeholder="Jelaskan masalah Anda secara detail..."
+                        required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;" id="askBtn">Posting Pertanyaan</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="askBtn">Posting
+                    Pertanyaan</button>
             </form>
         </div>
     </div>
 
-    <!-- Report Pest Modal -->
     <div class="modal" id="reportModal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('reportModal')">&times;</span>
@@ -1314,7 +1441,8 @@
                 </div>
                 <div class="form-group">
                     <label>Deskripsi</label>
-                    <textarea id="pestDescription" placeholder="Jelaskan kondisi serangan dan area yang terdampak..." required></textarea>
+                    <textarea id="pestDescription" placeholder="Jelaskan kondisi serangan dan area yang terdampak..."
+                        required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;" id="reportBtn">Kirim Laporan</button>
             </form>
@@ -1327,6 +1455,7 @@
         const API_BASE = 'http://localhost:8080/api/v1';
         let authToken = localStorage.getItem('authToken') || null;
         let currentUser = null;
+        let searchTimeout;
 
         document.addEventListener('DOMContentLoaded', () => {
             if (authToken) {
@@ -1336,7 +1465,53 @@
             loadQuestions();
             loadAlerts();
             createParticles();
+            loadProductMeta();
         });
+
+        // ==========================================
+        // UPDATE: DATA WILAYAH JATIM & TANAMAN (MANUAL)
+        // ==========================================
+        async function loadProductMeta() {
+            const wilayahJatim = [
+                "Bangkalan", "Banyuwangi", "Blitar", "Bojonegoro", "Bondowoso",
+                "Gresik", "Jember", "Jombang", "Kediri", "Lamongan",
+                "Lumajang", "Madiun", "Magetan", "Malang", "Mojokerto",
+                "Nganjuk", "Ngawi", "Pacitan", "Pamekasan", "Pasuruan",
+                "Ponorogo", "Probolinggo", "Sampang", "Sidoarjo", "Situbondo",
+                "Sumenep", "Trenggalek", "Tuban", "Tulungagung",
+                "Kota Batu", "Kota Blitar", "Kota Kediri", "Kota Madiun",
+                "Kota Malang", "Kota Mojokerto", "Kota Pasuruan",
+                "Kota Probolinggo", "Kota Surabaya"
+            ];
+
+            const jenisTanaman = [
+                "Padi", "Jagung", "Kedelai", "Cabai Rawit", "Cabai Merah",
+                "Bawang Merah", "Bawang Putih", "Tomat", "Wortel", "Kubis",
+                "Kentang", "Tebu", "Tembakau", "Kopi", "Kakao"
+            ];
+
+            try {
+                const cropSelect = document.getElementById('productCrop');
+                const regionSelect = document.getElementById('productRegion');
+                const searchCropSelect = document.getElementById('searchCrop');
+                const searchRegionSelect = document.getElementById('searchRegion');
+                const editCropSelect = document.getElementById('editProductCrop');
+                const editRegionSelect = document.getElementById('editProductRegion');
+
+                const cropOpts = jenisTanaman.map(item => `<option value="${item}">${item}</option>`).join('');
+                const regionOpts = wilayahJatim.map(item => `<option value="${item}">${item}</option>`).join('');
+
+                if (cropSelect) cropSelect.innerHTML = `<option value="">Pilih Jenis Tanaman</option>` + cropOpts;
+                if (regionSelect) regionSelect.innerHTML = `<option value="">Pilih Wilayah</option>` + regionOpts;
+                if (searchCropSelect) searchCropSelect.innerHTML = `<option value="">Semua Tanaman</option>` + cropOpts;
+                if (searchRegionSelect) searchRegionSelect.innerHTML = `<option value="">Semua Wilayah</option>` + regionOpts;
+                if (editCropSelect) editCropSelect.innerHTML = `<option value="">Pilih Jenis Tanaman</option>` + cropOpts;
+                if (editRegionSelect) editRegionSelect.innerHTML = `<option value="">Pilih Wilayah</option>` + regionOpts;
+
+            } catch (err) {
+                console.error('Gagal memuat data meta:', err);
+            }
+        }
 
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
@@ -1366,6 +1541,225 @@
                 particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
                 container.appendChild(particle);
             }
+        }
+
+        // ==========================================
+        // UPDATE: LOAD PRODUK DENGAN TOMBOL AKSI
+        // ==========================================
+
+        async function loadProducts(query = '') {
+            if (!query) {
+                query = document.getElementById('searchInput').value;
+            }
+
+            const crop = document.getElementById('searchCrop') ? document.getElementById('searchCrop').value : '';
+            const region = document.getElementById('searchRegion') ? document.getElementById('searchRegion').value : '';
+
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '<div class="empty-state"><div class="loading"></div><p>Memuat produk...</p></div>';
+
+            try {
+                let url;
+                if (query || crop || region) {
+                    // PERBAIKAN UTAMA: Ganti nama parameter supaya sesuai dengan backend (handle_product.go)
+                    // crop -> category
+                    // region -> location
+                    url = `${API_BASE}/market/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(crop)}&location=${encodeURIComponent(region)}`;
+                } else {
+                    url = `${API_BASE}/market/products`;
+                }
+
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (res.ok && data.data && data.data.length > 0) {
+                    container.innerHTML = data.data.map(p => {
+                        const isOwner = currentUser && (p.seller_id === currentUser.id || p.SellerID === currentUser.id);
+                        let actionButtons = '';
+
+                        if (isOwner) {
+                            actionButtons = `
+                                <button class="btn-edit" onclick="openEditProductModal('${p.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-delete" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+                            `;
+                        }
+
+                        return `
+                        <div class="product-card">
+                            <div class="product-image" onclick="viewProductDetail('${p.id}')">
+                                ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '<i class="fas fa-seedling"></i>'}
+                            </div>
+                            <div class="product-info">
+                                <h3 onclick="viewProductDetail('${p.id}')">${p.name}</h3>
+                                <p>${p.description || 'Tidak ada deskripsi'}</p>
+                                <div class="product-footer">
+                                    <div>
+                                        <div class="product-price">Rp ${Number(p.price).toLocaleString()}</div>
+                                        <div class="product-stock">Stok: ${p.stock}</div>
+                                    </div>
+                                    <div style="display:flex; align-items:center;">
+                                        <button class="btn-small" onclick="viewProductDetail('${p.id}')">Detail</button>
+                                        ${actionButtons}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `}).join('');
+
+                    if (!query && !crop && !region) {
+                        document.getElementById('statProducts').textContent = data.data.length;
+                    }
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>Produk tidak ditemukan</p>
+                            ${(query || crop || region) ? `<button class="btn-secondary" onclick="resetSearch()" style="margin-top:1rem;">Tampilkan Semua</button>` : ''}
+                        </div>`;
+                }
+            } catch (err) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Gagal memuat produk</p></div>';
+            }
+        }
+
+        // ==========================================
+        // FUNGSI BARU: DELETE, DETAIL, EDIT
+        // ==========================================
+
+        async function deleteProduct(id) {
+            if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/market/products/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (res.ok) {
+                    showToast('Produk berhasil dihapus');
+                    loadProducts();
+                } else {
+                    showToast('Gagal menghapus produk', 'error');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan server', 'error');
+            }
+        }
+
+        async function viewProductDetail(id) {
+            const modal = document.getElementById('productDetailModal');
+            const content = document.getElementById('productDetailContent');
+            content.innerHTML = '<div class="loading"></div>';
+            modal.classList.add('active');
+
+            try {
+                const res = await fetch(`${API_BASE}/market/products/${id}`);
+                const data = await res.json();
+
+                if (res.ok && data.data) {
+                    const p = data.data;
+                    content.innerHTML = `
+                        <h2 style="color:var(--primary); margin-bottom:1rem;">${p.name}</h2>
+                        ${p.image_url ? `<img src="${p.image_url}" style="width:100%; max-height:300px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">` : ''}
+                        
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                            <div><strong>Harga:</strong> <br>Rp ${Number(p.price).toLocaleString()}</div>
+                            <div><strong>Stok:</strong> <br>${p.stock} unit</div>
+                            <div><strong>Kategori:</strong> <br>${p.category || '-'}</div>
+                            <div><strong>Lokasi:</strong> <br>${p.location || '-'}</div>
+                        </div>
+                        
+                        <div style="background:var(--dark); padding:1rem; border-radius:10px; margin-bottom:1rem;">
+                            <strong>Deskripsi:</strong>
+                            <p style="margin-top:0.5rem; color:var(--text-muted);">${p.description}</p>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="buyProduct('${p.id}')" style="width:100%;">Beli Sekarang</button>
+                    `;
+                }
+            } catch (err) {
+                content.innerHTML = '<p style="text-align:center;">Gagal memuat detail produk.</p>';
+            }
+        }
+
+        async function openEditProductModal(id) {
+            try {
+                const res = await fetch(`${API_BASE}/market/products/${id}`);
+                const data = await res.json();
+
+                if (res.ok && data.data) {
+                    const p = data.data;
+                    document.getElementById('editProductId').value = p.id;
+                    document.getElementById('editProductName').value = p.name;
+                    document.getElementById('editProductDescription').value = p.description;
+                    document.getElementById('editProductPrice').value = p.price;
+                    document.getElementById('editProductStock').value = p.stock;
+                    if (document.getElementById('editProductCrop')) document.getElementById('editProductCrop').value = p.category || '';
+                    if (document.getElementById('editProductRegion')) document.getElementById('editProductRegion').value = p.location || '';
+
+                    document.getElementById('editProductModal').classList.add('active');
+                }
+            } catch (err) {
+                showToast('Gagal memuat data edit', 'error');
+            }
+        }
+
+        async function handleUpdateProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('editProductId').value;
+            const btn = e.target.querySelector('button');
+            btn.innerHTML = 'Menyimpan...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/market/products/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: document.getElementById('editProductName').value,
+                        description: document.getElementById('editProductDescription').value,
+                        price: parseInt(document.getElementById('editProductPrice').value),
+                        stock: parseInt(document.getElementById('editProductStock').value),
+                        category: document.getElementById('editProductCrop').value,
+                        location: document.getElementById('editProductRegion').value
+                    })
+                });
+
+                if (res.ok) {
+                    showToast('Produk berhasil diperbarui');
+                    closeModal('editProductModal');
+                    loadProducts();
+                } else {
+                    const data = await res.json();
+                    showToast(data.message || 'Gagal update produk', 'error');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan server', 'error');
+            }
+
+            btn.innerHTML = 'Simpan Perubahan';
+            btn.disabled = false;
+        }
+
+        // ==========================================
+        // AUTHENTICATION
+        // ==========================================
+
+        function handleSearch(e) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadProducts();
+            }, 500);
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            if (document.getElementById('searchCrop')) document.getElementById('searchCrop').value = '';
+            if (document.getElementById('searchRegion')) document.getElementById('searchRegion').value = '';
+            loadProducts();
         }
 
         async function handleRegister(e) {
@@ -1483,41 +1877,9 @@
             loadQuestions();
         }
 
-        async function loadProducts() {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '<div class="empty-state"><div class="loading"></div><p>Memuat produk...</p></div>';
-
-            try {
-                const res = await fetch(`${API_BASE}/market/products`);
-                const data = await res.json();
-
-                if (res.ok && data.data && data.data.length > 0) {
-                    container.innerHTML = data.data.map(p => `
-                        <div class="product-card">
-                            <div class="product-image">
-                                ${p.image_url ? `<img src="${p.image_url}" alt="${p.name}">` : '<i class="fas fa-seedling"></i>'}
-                            </div>
-                            <div class="product-info">
-                                <h3>${p.name}</h3>
-                                <p>${p.description || 'Tidak ada deskripsi'}</p>
-                                <div class="product-footer">
-                                    <div>
-                                        <div class="product-price">Rp ${Number(p.price).toLocaleString()}</div>
-                                        <div class="product-stock">Stok: ${p.stock}</div>
-                                    </div>
-                                    <button class="btn-small" onclick="buyProduct('${p.id}')">Beli</button>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                    document.getElementById('statProducts').textContent = data.data.length;
-                } else {
-                    container.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><p>Belum ada produk</p></div>';
-                }
-            } catch (err) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Gagal memuat produk</p></div>';
-            }
-        }
+        // ==========================================
+        // CREATE PRODUCT
+        // ==========================================
 
         async function handleCreateProduct(e) {
             e.preventDefault();
@@ -1526,11 +1888,12 @@
                 return;
             }
 
-            const btn = document.getElementById('createProductBtn');
+            const btn = document.getElementById('createProductBtnSubmit');
             btn.innerHTML = '<div class="loading"></div> Menambah...';
             btn.disabled = true;
 
             try {
+                // UPDATE: Mengambil value dari dropdown crop & region dengan nama key yang benar
                 const res = await fetch(`${API_BASE}/market/products`, {
                     method: 'POST',
                     headers: {
@@ -1541,7 +1904,9 @@
                         name: document.getElementById('productName').value,
                         description: document.getElementById('productDescription').value,
                         price: parseInt(document.getElementById('productPrice').value),
-                        stock: parseInt(document.getElementById('productStock').value)
+                        stock: parseInt(document.getElementById('productStock').value),
+                        category: document.getElementById('productCrop').value,
+                        location: document.getElementById('productRegion').value
                     })
                 });
 
@@ -1550,7 +1915,7 @@
                 if (res.ok) {
                     const productId = data.data.id;
                     const fileInput = document.getElementById('productImage');
-                    
+
                     if (fileInput.files[0]) {
                         await uploadProductImage(productId, fileInput.files[0]);
                     }
@@ -1593,6 +1958,10 @@
             }
             showToast('Fitur pembelian akan segera tersedia! 🛒');
         }
+
+        // ==========================================
+        // FORUM LOGIC
+        // ==========================================
 
         async function loadQuestions() {
             const container = document.getElementById('forumContainer');
@@ -1692,6 +2061,10 @@
             showToast('Detail pertanyaan akan segera tersedia! 📖');
         }
 
+        // ==========================================
+        // PEST CONTROL LOGIC
+        // ==========================================
+
         async function loadAlerts() {
             const container = document.getElementById('alertsContainer');
             container.innerHTML = '<div class="empty-state"><div class="loading"></div><p>Memuat laporan...</p></div>';
@@ -1785,11 +2158,11 @@
 
         async function viewAlertDetail(id) {
             if (!id) return;
-            
+
             try {
                 const res = await fetch(`${API_BASE}/alerts/${id}`);
                 const data = await res.json();
-                
+
                 if (res.ok && data.data) {
                     const alert = data.data;
                     const severityText = {
@@ -1797,14 +2170,18 @@
                         'medium': 'Sedang',
                         'low': 'Rendah'
                     }[alert.severity] || 'Rendah';
-                    
+
                     showToast(`${alert.pest_name} di ${alert.city} - Tingkat: ${severityText}`);
-                    
+
                 }
             } catch (err) {
                 console.error('Error loading alert detail:', err);
             }
         }
+
+        // ==========================================
+        // UTILITY & HELPER FUNCTIONS
+        // ==========================================
 
         async function createReservation(productId, quantity, note) {
             if (!authToken) {
@@ -1970,7 +2347,7 @@
 
                 if (res.ok) {
                     showToast(data.data.liked ? 'Pertanyaan disukai! ❤️' : 'Like dibatalkan');
-                    loadQuestions(); 
+                    loadQuestions();
                 } else {
                     showToast(data.message || 'Gagal toggle like', 'error');
                 }
@@ -1981,7 +2358,7 @@
 
         function getTimeAgo(dateString) {
             if (!dateString) return 'Baru saja';
-            
+
             const date = new Date(dateString);
             const now = new Date();
             const seconds = Math.floor((now - date) / 1000);
@@ -2009,7 +2386,7 @@
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = `toast show ${type}`;
-            
+
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
@@ -2063,7 +2440,7 @@
         function animateCounter(elementId, target) {
             const element = document.getElementById(elementId);
             if (!element) return;
-            
+
             let current = 0;
             const increment = target / 50;
             const timer = setInterval(() => {
@@ -2110,4 +2487,5 @@
 
     </script>
 </body>
+
 </html>

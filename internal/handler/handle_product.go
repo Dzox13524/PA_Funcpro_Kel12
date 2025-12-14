@@ -111,3 +111,37 @@ func HandleUploadProductImage(uploadService service.UploadProductImageFunc) http
 		response.WriteJSON(w, http.StatusOK, "upload_success", map[string]string{"image_url": url})
 	}
 }
+func HandleSearchProducts(searchService service.SearchProductsServiceFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		query := r.URL.Query().Get("q")      
+		category := r.URL.Query().Get("category") 
+		location := r.URL.Query().Get("location")
+		products, err := searchService(r.Context(), query, category, location)
+		if err != nil {
+			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
+			return
+		}
+		response.WriteJSON(w, http.StatusOK, "success", products)
+	}
+}
+func HandleGetMetaCrops(getMetaCropsService service.GetMetaCropsServiceFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		crops, err := getMetaCropsService(r.Context())	
+		if err != nil {
+			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
+			return
+		}	
+		response.WriteJSON(w, http.StatusOK, "success", crops)
+	}
+}
+
+func HandleGetMetaRegions(getMetaRegionsService service.GetMetaRegionsServiceFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		regions, err := getMetaRegionsService(r.Context())
+		if err != nil {
+			response.WriteJSON(w, http.StatusInternalServerError, err.Error(), nil)
+			return
+		}	
+		response.WriteJSON(w, http.StatusOK, "success", regions)
+	}
+}

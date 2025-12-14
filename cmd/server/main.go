@@ -37,6 +37,9 @@ func main() {
 	prodRepoGetByID := repository.NewGetProductByIDRepository(db)
 	prodRepoUpdate := repository.NewUpdateProductRepository(db)
 	prodRepoDelete := repository.NewDeleteProductRepository(db)
+	prodRepoSearch := repository.NewSearchProductsRepository(db)
+	prodRepoMetaCrops := repository.NewGetMetaCropsRepository(db)
+	prodRepoMetaRegions := repository.NewGetMetaRegionsRepository(db)
 
 	marketRepoCreate := repository.NewCreateTransactionRepository(db)
 	marketRepoGetByID := repository.NewGetTransactionByIDRepository(db)
@@ -67,6 +70,9 @@ func main() {
 	svcUpdateProduct := service.NewUpdateProductService(prodRepoUpdate, prodRepoGetByID)
 	svcDeleteProduct := service.NewDeleteProductService(prodRepoDelete, prodRepoGetByID)
 	svcUploadImage := service.NewUploadProductImageService(prodRepoGetByID, prodRepoUpdate)
+	svcSearchProducts := service.NewSearchProductsService(prodRepoSearch)
+	svcMetaCrops := service.NewGetMetaCropsService(prodRepoMetaCrops)
+	svcMetaRegions := service.NewGetMetaRegionsService(prodRepoMetaRegions)
 
 	svcCreateReservation := service.NewCreateReservationService(marketRepoCreate, prodRepoGetByID, prodRepoUpdate)
 	svcCreateOrder := service.NewCreateOrderService(marketRepoCreate, prodRepoGetByID, prodRepoUpdate)
@@ -103,6 +109,10 @@ func main() {
 	mux.HandleFunc("PUT /api/v1/market/products/{id}", middleware.AuthMiddleware(handle.HandleUpdateProduct(svcUpdateProduct)))
 	mux.HandleFunc("DELETE /api/v1/market/products/{id}", middleware.AuthMiddleware(handle.HandleDeleteProduct(svcDeleteProduct)))
 	mux.HandleFunc("POST /api/v1/market/products/{id}/upload", middleware.AuthMiddleware(handle.HandleUploadProductImage(svcUploadImage)))
+
+	mux.HandleFunc("GET /api/v1/market/search", handle.HandleSearchProducts(svcSearchProducts))
+	mux.HandleFunc("GET /api/v1/market/meta/crops", handle.HandleGetMetaCrops(svcMetaCrops))
+	mux.HandleFunc("GET /api/v1/market/meta/regions", handle.HandleGetMetaRegions(svcMetaRegions))
 
 	mux.HandleFunc("POST /api/v1/market/reservations", middleware.AuthMiddleware(handle.HandleCreateReservation(svcCreateReservation)))
 	mux.HandleFunc("POST /api/v1/market/orders", middleware.AuthMiddleware(handle.HandleCreateOrder(svcCreateOrder)))
